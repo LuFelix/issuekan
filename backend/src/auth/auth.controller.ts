@@ -4,6 +4,7 @@ import {
   Post,
   Body,
   ValidationPipe,
+  
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 
@@ -13,7 +14,7 @@ import {
   ApiResponse,
   ApiBody,
 } from '@nestjs/swagger';
-import { LoginDto, MinimalRegisterDto, RegisterDto } from './dto/auth.dto';
+import { LoginDto, MinimalRegisterDto, VerifyEmailDto } from './dto/auth.dto';
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -24,10 +25,19 @@ export class AuthController {
   @ApiOperation({ summary: 'Registrar um novo usuário' })
   @ApiBody({ type: MinimalRegisterDto })
   @ApiResponse({ status: 201, description: 'Usuário registrado com sucesso' })
-  @ApiResponse({ status: 400, description: 'Usuário com este CPF já existe' })
+  @ApiResponse({ status: 400, description: 'Usuário com este e-mail já existe' })
   async register(@Body() minimalRegisterDto: MinimalRegisterDto) {
-    const cpf = await this.authService.register(minimalRegisterDto);
-    return { message: 'Usuário registrado com sucesso', cpf};
+    const email = await this.authService.register(minimalRegisterDto);
+    return { message: 'Usuário registrado com sucesso', email };
+  }
+
+  @Post('verify-email')
+  @ApiOperation({ summary: 'Verificar código de e-mail' })
+  @ApiBody({ type: VerifyEmailDto })
+  @ApiResponse({ status: 200, description: 'E-mail verificado com sucesso' })
+  @ApiResponse({ status: 401, description: 'Código inválido ou expirado' })
+  async verifyEmail(@Body() verifyEmailDto: VerifyEmailDto) {
+    return this.authService.verifyEmailCode(verifyEmailDto.email, verifyEmailDto.code);
   }
 
   @Post('login')

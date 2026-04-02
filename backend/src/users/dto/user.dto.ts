@@ -1,6 +1,6 @@
 // users/dto/user.dto.ts
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString, IsEmail, Length, Matches } from 'class-validator';
+import { IsString, IsEmail, Length, Matches, IsOptional, IsNumber } from 'class-validator';
 
 export class CreateUserDto {
   @ApiProperty({ example: 'João Silva' })
@@ -12,9 +12,15 @@ export class CreateUserDto {
   email: string;
 
   @ApiProperty({ example: '12345678900' })
+  @IsOptional() 
   @IsString()
   @Length(11, 11)
-  cpf: string;
+  cpf?: string;
+
+  @ApiProperty({ required: false, example: 2 })
+  @IsOptional()
+  @IsNumber()
+  role_id?: number;
 
   @ApiProperty({ example: '11987654321' })
   @IsString()
