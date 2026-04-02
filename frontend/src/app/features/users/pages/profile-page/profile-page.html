@@ -12,7 +12,9 @@
           alt="Foto de Perfil"
           class="profile-image"
           (click)="triggerImageUpload()" [class.editable]="isEditing" />
-        <span *ngIf="isEditing" class="text-sm text-gray-500 mt-2">(Upload de foto não implementado)</span>
+        @if (isEditing) {
+          <span class="text-sm text-gray-500 mt-2">(Upload de foto não implementado)</span>
+        }
       </div>
 
       <form [formGroup]="profileForm" class="profile-form">
@@ -23,35 +25,47 @@
         <mat-form-field appearance="outline">
           <mat-label>Nome</mat-label>
           <input matInput formControlName="firstName" />
-          <mat-error *ngIf="profileForm.get('firstName')?.hasError('required') && profileForm.get('firstName')?.touched">
-            Nome é obrigatório.
-          </mat-error>
+          @if (profileForm.get('firstName')?.hasError('required') && profileForm.get('firstName')?.touched) {
+            <mat-error>
+              Nome é obrigatório.
+            </mat-error>
+          }
         </mat-form-field>
         <mat-form-field appearance="outline">
           <mat-label>Sobrenome</mat-label>
           <input matInput formControlName="lastName" />
-          <mat-error *ngIf="profileForm.get('lastName')?.hasError('required') && profileForm.get('lastName')?.touched">
-            Sobrenome é obrigatório.
-          </mat-error>
+          @if (profileForm.get('lastName')?.hasError('required') && profileForm.get('lastName')?.touched) {
+            <mat-error>
+              Sobrenome é obrigatório.
+            </mat-error>
+          }
         </mat-form-field>
         <mat-form-field appearance="outline">
           <mat-label>Telefone</mat-label>
           <input matInput formControlName="phone" placeholder="(XX) XXXXX-XXXX" />
-          <mat-error *ngIf="profileForm.get('phone')?.hasError('pattern') && profileForm.get('phone')?.touched">
-            Formato inválido. Ex: (11) 98765-4321
-          </mat-error>
+          @if (profileForm.get('phone')?.hasError('pattern') && profileForm.get('phone')?.touched) {
+            <mat-error>
+              Formato inválido. Ex: (11) 98765-4321
+            </mat-error>
+          }
         </mat-form-field>
 
         <mat-form-field appearance="outline">
           <mat-label>CEP</mat-label>
           <input matInput formControlName="cep" placeholder="00000-000" maxlength="9" />
-           <mat-icon *ngIf="isFetchingCep" matSuffix> <mat-spinner [diameter]="20"></mat-spinner> </mat-icon>
-          <mat-error *ngIf="profileForm.get('cep')?.hasError('pattern') && profileForm.get('cep')?.touched">
-            Formato inválido (00000-000 ou 00000000).
-          </mat-error>
-           <mat-hint *ngIf="!isFetchingCep && profileForm.get('cep')?.valid && profileForm.get('cep')?.value">
-             Digite o CEP para buscar o endereço.
-           </mat-hint>
+          @if (isFetchingCep) {
+            <mat-icon matSuffix> <mat-spinner [diameter]="20"></mat-spinner> </mat-icon>
+          }
+          @if (profileForm.get('cep')?.hasError('pattern') && profileForm.get('cep')?.touched) {
+            <mat-error>
+              Formato inválido (00000-000 ou 00000000).
+            </mat-error>
+          }
+          @if (!isFetchingCep && profileForm.get('cep')?.valid && profileForm.get('cep')?.value) {
+            <mat-hint>
+              Digite o CEP para buscar o endereço.
+            </mat-hint>
+          }
         </mat-form-field>
 
         <mat-form-field appearance="outline">
@@ -76,18 +90,24 @@
         </div>
 
         <div class="profile-actions">
-          <button mat-raised-button color="primary" *ngIf="!isEditing" (click)="toggleEditMode()">
-            <mat-icon>edit</mat-icon> Editar Perfil
-          </button>
-          <ng-container *ngIf="isEditing">
+          @if (!isEditing) {
+            <button mat-flat-button color="primary" (click)="toggleEditMode()">
+              <mat-icon>edit</mat-icon> Editar Perfil
+            </button>
+          }
+          @if (isEditing) {
             <button mat-raised-button color="accent" (click)="onSave()" [disabled]="profileForm.invalid || isLoading || isFetchingCep">
-              <mat-spinner *ngIf="isLoading" [diameter]="20"></mat-spinner>
-              <span *ngIf="!isLoading">Salvar Alterações</span>
+              @if (isLoading) {
+                <mat-spinner [diameter]="20"></mat-spinner>
+              }
+              @if (!isLoading) {
+                <span>Salvar Alterações</span>
+              }
             </button>
             <button mat-stroked-button color="warn" (click)="onCancel()" [disabled]="isLoading">
               <mat-icon>cancel</mat-icon> Cancelar
             </button>
-          </ng-container>
+          }
         </div>
       </form>
     </mat-card-content>

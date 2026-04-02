@@ -10,12 +10,12 @@ export class User {
     @Column({ length: 100, nullable: false })
     name: string;
 
-    @Column({ length: 100, nullable: false })
+    @Index({ unique: true }) 
+    @Column({ length: 100, nullable: false, unique: true })
     email: string;
 
-    // alterar para 11, guardar sem mascara
-    @Index()
-    @Column({ length: 14, unique: true, nullable: false })
+    @Index({ unique: true })
+    @Column({ length: 11, unique: true, nullable: true }) 
     cpf: string;
 
     @Column({ length: 11, nullable: true })
@@ -48,4 +48,13 @@ export class User {
 
     @UpdateDateColumn()
     updatedAt: Date;
+
+    @Column({ default: false })
+    isVerified: boolean;
+
+    @Column({ type: 'varchar', nullable: true })
+    verificationCode: string | null;
+
+    @Column({ type: 'timestamp', nullable: true })
+    verificationExpires: Date| null;
 }

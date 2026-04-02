@@ -13,16 +13,7 @@ import {
     UserData
 } from '../../features/shared/models/users.models';
 import { environment } from '../../environments/environment';
-// Interface para a resposta do Login
-export interface LoginResponse {
-  access_token: string;
-}
-
-// Interface para as credenciais de Login
-export interface LoginCredentials {
-  cpf: string;
-  password: string;
-}
+import { LoginCredentials, LoginResponse } from '../../features/shared/models/auth.model';
 
 @Injectable({
   providedIn: 'root'
