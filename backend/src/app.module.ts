@@ -9,6 +9,7 @@ import { RolesModule } from './roles/roles.module';
 import { UsersModule } from './users/users.module';
 import { GlobalJwtModule } from './shared/global-jwt.module';
 import { SeedModule } from './seeds/seed.module';
+import { MailerModule } from '@nestjs-modules/mailer';
 
 @Module({
   imports: [
@@ -25,6 +26,24 @@ import { SeedModule } from './seeds/seed.module';
         database: config.get<string>('DB_DATABASE'),
         entities: [__dirname + '/**/*.entity{.ts,.js}'],
         synchronize: true,
+      }),
+    }),
+    MailerModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: async (config: ConfigService) => ({
+        transport: {
+          host: config.get('MAIL_HOST'),
+          port: config.get('MAIL_PORT'),
+          secure: config.get('MAIL_PORT') == 465, // true para 465, false para outras
+          auth: {
+            user: config.get('MAIL_USER'),
+            pass: config.get('MAIL_PASS'),
+          },
+        },
+        defaults: {
+          from: config.get('MAIL_FROM'),
+        },
       }),
     }),
     AuthModule,
