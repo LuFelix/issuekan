@@ -1,4 +1,4 @@
-# Ambiente de Desenvolvimento da Avaliação Técnica
+# Desenvolvimento da Base de Gerenciamento de Usuários TIWEB
 
 Este repositório contém a configuração do Docker Compose e os arquivos necessários para orquestrar e executar todo o ambiente de desenvolvimento, que consiste em um backend em NestJS e um frontend em Angular.
 
@@ -122,8 +122,9 @@ Após a execução, o ambiente estará disponível nos seguintes endereços:
 
 Para que o `docker-compose.yml` funcione, sua estrutura de pastas local deve ser a seguinte:
 ```
-/workspace/
-|-- avaliacao-tecnica/  (Você está aqui)
-|-- back-nest-avaliacao-tecnica-1/
-|-- front-angular-avaliacao-tecnica-1/
+/mvp-base/(Você está aqui)
+|-- backend/
+|-- frontend/
+|-- wp/  
+
 ```

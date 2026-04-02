@@ -27,7 +27,6 @@ import { RegistrationData } from '../../../shared/models/auth.model';
     MatIconModule,
     MatCardModule,
     MatProgressSpinnerModule,
-    NgxMaskDirective
   ],
   templateUrl: './register-form.component.html',
   styleUrl: './register-form.component.scss'
