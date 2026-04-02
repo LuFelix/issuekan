@@ -4,6 +4,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { Transform } from 'class-transformer';
 
 export class RegisterDto {
+  
   @ApiProperty({
     description: 'Token de convite fornecido para o registro do usuário.',
     example: 'a12b3c4d5f6g7h8i9j0k',

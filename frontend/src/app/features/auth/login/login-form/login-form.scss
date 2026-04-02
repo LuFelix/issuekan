@@ -47,15 +47,41 @@ mat-form-field {
   height: 48px;
 }
 
-a {
-  cursor: pointer;
-  display: block;
-  text-align: center;
+.auth-links {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  gap: 12px;
+  margin-top: 8px;
+  font-size: 14px;
   color: var(--mat-sys-on-secondary-container);
-  text-decoration: none;
-  transition: text-decoration 0.2s ease-in-out;
 
-  &:hover {
-    text-decoration: underline;
+  a {
+    cursor: pointer;
+    color: var(--mat-sys-primary); // Usa a cor primária para destacar os links
+    text-decoration: none;
+    font-weight: 500;
+    transition: opacity 0.2s ease-in-out;
+
+    &:hover {
+      opacity: 0.8;
+      text-decoration: underline;
+    }
+  }
+
+  span {
+    color: var(--mat-sys-outline); // Cor mais neutra para o texto normal
+  }
+
+  .register-link {
+    font-weight: 600;
+  }
+
+  .divider {
+    width: 80%;
+    height: 1px;
+    background-color: var(--mat-sys-outline-variant);
+    margin: 4px 0;
   }
 }

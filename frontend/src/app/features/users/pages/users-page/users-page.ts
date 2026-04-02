@@ -8,7 +8,7 @@ import { FormControl, FormGroup, ReactiveFormsModule, FormBuilder } from '@angul
 import { UserService } from '../../services/user.service';
 import { AuthService } from '../../../../core/services/auth.service';
 //import { User } from './users-page';
-import { UserDetailsModalComponent,UserModalData } from '../../components/user-details/user-details-modal.component';
+import { UserDetailsModalComponent,UserModalData } from '../../../admin/components/user-details/user-details-modal.component';
 import { CommonModule } from '@angular/common'; // Necessário para ngIf
 // ... outros imports de módulos standalone ...
 import { MatCardModule } from '@angular/material/card';
@@ -23,7 +23,7 @@ import { MatPaginator, MatPaginatorModule, PageEvent } from '@angular/material/p
 import { catchError, debounceTime, distinctUntilChanged, map, merge, of, startWith, switchMap, tap, finalize } from 'rxjs';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { User } from '../../../shared/models/users.models';
-import { UsersListComponent } from '../../components/users-list/users-list.component';
+import { UsersListComponent } from '../../../admin/components/users-list/users-list.component';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({

@@ -5,10 +5,10 @@
 
   <form [formGroup]="form" (ngSubmit)="onSubmit()">
     <mat-form-field appearance="outline">
-      <mat-label>CPF</mat-label>
-      <input matInput formControlName="cpf" placeholder="000.000.000-00" mask="000.000.000-00" />
-      @if (form.get('cpf')?.hasError('required')) {
-      <mat-error>CPF é obrigatório</mat-error>
+      <mat-label>E-mail ou CPF</mat-label>
+      <input matInput formControlName="identifier" placeholder="seu@email.com ou 000.000.000-00" />
+      @if (form.get('identifier')?.hasError('required')) {
+        <mat-error>O identificador é obrigatório</mat-error>
       }
     </mat-form-field>
 
@@ -20,23 +20,27 @@
       </button>
 
       @if (form.get('password')?.hasError('required')) {
-      <mat-error>A senha é obrigatória</mat-error>
+        <mat-error>A senha é obrigatória</mat-error>
       } @else if (form.get('password')?.hasError('pattern') || form.get('password')?.hasError('minlength')) {
-      <mat-error>
-        A senha deve ser mais forte (mín. 8 caracteres, maiúsculas, minúsculas, números e símbolos).
-      </mat-error>
+        <mat-error>
+          A senha deve ter mín. 8 caracteres, com maiúsculas, minúsculas, números e símbolos.
+        </mat-error>
       }
     </mat-form-field>
 
-    <button class="send-button" mat-raised-button color="primary" type="submit"
+    <button class="send-button" mat-flat-button color="primary" type="submit"
       [disabled]="form.invalid || isSubmitting()">
       @if (isSubmitting()) {
-      <mat-spinner [diameter]="24"></mat-spinner>
+        <mat-spinner [diameter]="24"></mat-spinner>
       } @else {
-      Entrar
+        Entrar
       }
     </button>
   </form>
 
-  <a routerLink="/forgot-password">Esqueci minha senha</a>
+  <div class="auth-links">
+    <a routerLink="/forgot-password">Esqueci minha senha</a>
+    <div class="divider"></div>
+    <span>Não tem uma conta? <a class="register-link" routerLink="/register">Cadastre-se</a></span>
+  </div>
 </mat-card>

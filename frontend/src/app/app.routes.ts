@@ -1,5 +1,5 @@
 import { Routes } from '@angular/router';
-import { LoginPage } from './features/users/pages/login-page/login-page';
+import { LoginPage } from './features/auth/login/login-page/login-page';
 import { LandingPage } from './pages/landing-page/landing-page';
 import { authGuard } from './core/guards/auth-guard'; // Seu guarda de autenticação
 import { roleGuard } from './core/guards/role-guard'; // Seu guarda de role (vamos substituir/complementar)
@@ -8,7 +8,7 @@ import { PermissionGuard } from './core/guards/permission.guard'; // Importe o g
 // Importa o novo Layout e a página de Métricas
 import { MainLayoutComponent } from './layouts/main-layout/main-layout.component';
 import { DashboardMetricsComponent } from './features/users/pages/dashboard-metrics/dashboard-metrics.component';
-import { UnauthorizedComponent } from './features/users/pages/unauthorized-page/unauthorized.component'; // Importa a nova página
+import { UnauthorizedComponent } from './core/pages/unauthorized-page/unauthorized.component'; // Importa a nova página
 //import { Welcome } from './pages/welcome/welcome'; // Assumindo que exista
 
 export const routes: Routes = [

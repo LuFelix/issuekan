@@ -52,7 +52,7 @@ export class User {
     @Column({ default: false })
     isVerified: boolean;
 
-    @Column({ type: 'varchar',nullable: true })
+    @Column({ type: 'varchar', nullable: true })
     verificationCode: string | null;
 
     @Column({ type: 'timestamp', nullable: true })

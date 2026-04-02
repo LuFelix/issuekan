@@ -9,16 +9,17 @@ import { MatCardModule } from '@angular/material/card';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { CommonModule } from '@angular/common';
-import { UserService } from '../../services/user.service';
+import { UserService } from '../../../users/services/user.service';
 import { User } from '../../../shared/models/users.models';
 import { Role } from '../../../shared/models/role.model';
 import { finalize, Observable } from 'rxjs';
 import { MatSelectModule } from '@angular/material/select'; 
 import { MatOptionModule } from '@angular/material/core';
-import { RoleService } from '../../services/role.service';
+import { RoleService } from '../../../users/services/role.service';
+
 // Interface para os dados recebidos
 export interface UserModalData {
-    userId: number | null; // Aceita null para criação
+    userId: number | null; 
     isCreation: boolean;
 }
 

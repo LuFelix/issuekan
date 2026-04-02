@@ -1,6 +1,6 @@
 import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { finalize } from 'rxjs';
 
@@ -10,16 +10,15 @@ import { MatCardModule } from '@angular/material/card'; // MUDANÇA: Importe o M
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 // Outros Imports
-import { NgxMaskDirective } from 'ngx-mask';
-import { AuthService } from '../../../../../core/services/auth.service';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { AuthService } from '../../../../core/services/auth.service';
 
 @Component({
   selector: 'app-login-form',
   imports: [
-    NgxMaskDirective,
+    RouterModule,
     ReactiveFormsModule,
     MatFormFieldModule,
     MatInputModule,
@@ -37,8 +36,8 @@ export class LoginForm {
   private readonly snackBar = inject(MatSnackBar);
   private readonly fb = inject(FormBuilder);
 
-  readonly form = this.fb.group({
-    cpf: ['', [Validators.required]],
+ readonly form = this.fb.group({
+    identifier: ['', [Validators.required]], 
     password: ['', [
       Validators.required,
       Validators.minLength(8),
@@ -63,7 +62,7 @@ export class LoginForm {
 
     const raw = this.form.getRawValue();
     const credentials = {
-      cpf: raw.cpf ?? '',
+      identifier: raw.identifier ?? '',
       password: raw.password ?? ''
     };
 
