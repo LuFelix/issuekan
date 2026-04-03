@@ -38,6 +38,7 @@ tmp/
 /libpeerconnection.log
 testem.log
 /typings/
+.angular/
 
 # ==========================================
 # 5. BACKEND ESPECÍFICO (NESTJS)
