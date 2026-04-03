@@ -3,7 +3,7 @@ import {
   Controller,
   Post,
   Body,
-  ValidationPipe,
+  
   
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
@@ -15,6 +15,9 @@ import {
   ApiBody,
 } from '@nestjs/swagger';
 import { LoginDto, MinimalRegisterDto, VerifyEmailDto } from './dto/auth.dto';
+import { Public } from './decorators/public.decorator';
+import { GoogleLoginDto } from './dto/google-token.dto';
+
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -40,6 +43,12 @@ export class AuthController {
     return this.authService.verifyEmailCode(verifyEmailDto.email, verifyEmailDto.code);
   }
 
+  @Public() // Garante que essa rota não exige JWT para ser acessada
+  @Post('google')
+  async googleLogin(@Body() data: GoogleLoginDto) {
+     return this.authService.loginWithGoogle(data.token);
+}
+
   @Post('login')
   @ApiOperation({ summary: 'Fazer login do usuário' })
   @ApiBody({ type: LoginDto })
@@ -52,4 +61,6 @@ export class AuthController {
       access_token: user.access_token,
     };
   }
+
+  
 }

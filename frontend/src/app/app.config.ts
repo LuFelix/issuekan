@@ -10,7 +10,7 @@ import { provideEnvironmentNgxMask } from 'ngx-mask';
 import { provideHttpClient, withFetch, withInterceptors } from '@angular/common/http';
 import { authInterceptor } from './core/interceptor/auth-interceptor';
 import { GoogleLoginProvider, SocialAuthServiceConfig } from '@abacritt/angularx-social-login';
-import { environment } from '../app/environments/environment'; // Ajuste o caminho '../' conforme a pasta do seu projeto
+import { environment } from './environments/environment'; // Ajuste o caminho '../' conforme a pasta do seu projeto
 export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),

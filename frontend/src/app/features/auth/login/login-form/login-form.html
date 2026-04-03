@@ -38,6 +38,26 @@
     </button>
   </form>
 
+  <div class="social-login-section">
+    <div class="divider-container">
+      <span class="divider-line"></span>
+      <span class="divider-text">OU</span>
+      <span class="divider-line"></span>
+    </div>
+    
+    <div class="google-button-wrapper">
+  <asl-google-signin-button 
+    [width]="340"
+    type="standard" 
+    size="large" 
+    text="signin_with"
+    theme="filled_blue"
+    shape="pill"> 
+  </asl-google-signin-button>
+</div>
+   
+  </div>
+
   <div class="auth-links">
     <a routerLink="/forgot-password">Esqueci minha senha</a>
     <div class="divider"></div>

@@ -14,17 +14,20 @@ import {
 } from '../../features/shared/models/users.models';
 import { environment } from '../../environments/environment';
 import { LoginCredentials, LoginResponse } from '../../features/shared/models/auth.model';
+import { SocialAuthService } from '@abacritt/angularx-social-login';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
+
   private readonly API_URL = environment.apiUrl;
   private readonly BASE_PATH = `${this.API_URL}/auth`;
   private permissionsUrl = `${this.API_URL}/users/me/permissions`; 
   private readonly http = inject(HttpClient);
   private readonly router = inject(Router);
   private readonly TOKEN_KEY = 'auth_token';
+  private readonly socialAuthService = inject(SocialAuthService);
 
   // --- Signals para Estado ---
   readonly #decodedToken: WritableSignal<JwtPayload | null> = signal(null);
@@ -89,9 +92,15 @@ export class AuthService {
 
   logout(): void {
     console.log("[AuthService Logout] Deslogando...");
+
     localStorage.removeItem(this.TOKEN_KEY);
     this.#decodedToken.set(null);
     this.#userPermissions.set(new Set());
+
+    this.socialAuthService.signOut()
+      .then(() => console.log("Sessão do Google encerrada no frontend."))
+      .catch((err: unknown) => console.log("Google SignOut ignorado (não estava logado)."));
+
     this.router.navigate(['/login']);
   }
 
@@ -246,5 +255,37 @@ export class AuthService {
     return this.http.post(`${this.API_URL}/resend-code`, { email });
   }
 
+  // --- No seu AuthService (auth.service.ts) ---
+
+  loginWithGoogle(idToken: string): Observable<LoginResponse> {
+    console.log("[AuthService Google Login] Iniciando validação do token Google...");
+    let loginResponse: LoginResponse;
+
+    // 1. Enviamos o token para o endpoint que criaremos no NestJS (ex: /auth/google)
+    return this.http.post<LoginResponse>(`${this.BASE_PATH}/google`, { token: idToken }).pipe(
+      tap({
+        next: response => {
+          console.log("[AuthService Google Login] Token do sistema recebido após validação Google.");
+          loginResponse = response;
+          this.setSession(response.access_token); // Salva o JWT do nosso sistema e atualiza signals
+        },
+        error: err => console.error("[AuthService Google Login] Erro na validação backend:", err)
+      }),
+      // 2. Repetimos o fluxo de permissões para garantir que o usuário logado via Google tenha acesso ao Dashboard
+      switchMap(() => {
+        console.log("[AuthService Google Login] Buscando permissões para usuário social...");
+        return this.fetchAndStorePermissions();
+      }),
+      map(() => {
+        console.log("[AuthService Google Login] Fluxo completo. Redirecionando...");
+        return loginResponse;
+      }),
+      catchError(err => {
+        console.error("[AuthService Google Login] Erro Crítico no fluxo Social:", err);
+        this.logout();
+        throw err;
+      })
+    );
+  }
    
 }
