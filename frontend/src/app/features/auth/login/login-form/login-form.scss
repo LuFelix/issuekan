@@ -47,6 +47,56 @@ mat-form-field {
   height: 48px;
 }
 
+/* =========================================
+   NOVA SEÇÃO: DIVISOR E BOTÃO DO GOOGLE
+   ========================================= */
+
+.social-login-section {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Flexbox para alinhar as linhas e o "OU" perfeitamente no centro */
+.divider-container {
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.divider-line {
+  flex-grow: 1; /* Faz a linha esticar e ocupar o espaço vazio */
+  height: 1px;
+  background-color: var(--mat-sys-outline-variant);
+}
+
+.divider-text {
+  margin: 0 16px;
+  color: var(--mat-sys-outline);
+  font-size: 14px;
+  font-weight: 500;
+}
+
+/* Envelopando o botão do Google */
+.google-button-wrapper {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 48px;
+
+  /* Centraliza a tag do Angular caso sobre algum pixel */
+  ::ng-deep asl-google-signin-button {
+    display: flex;
+    justify-content: left;
+  }
+}
+
+/* =========================================
+   LINKS INFERIORES
+   ========================================= */
+
 .auth-links {
   display: flex;
   flex-direction: column;

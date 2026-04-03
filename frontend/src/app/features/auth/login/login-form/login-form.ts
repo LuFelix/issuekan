@@ -3,6 +3,7 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { finalize } from 'rxjs';
+import { OnInit } from '@angular/core';
 
 // Imports do Angular Material
 import { MatButtonModule } from '@angular/material/button';
@@ -14,9 +15,11 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 // Outros Imports
 import { AuthService } from '../../../../core/services/auth.service';
+import { SocialAuthService, GoogleSigninButtonModule, SocialUser } from '@abacritt/angularx-social-login';
 
 @Component({
   selector: 'app-login-form',
+  standalone: true,
   imports: [
     RouterModule,
     ReactiveFormsModule,
@@ -25,12 +28,15 @@ import { AuthService } from '../../../../core/services/auth.service';
     MatButtonModule,
     MatIconModule,
     MatCardModule,
-    MatProgressSpinnerModule
+    MatProgressSpinnerModule,
+    GoogleSigninButtonModule
   ],
   templateUrl: './login-form.html',
   styleUrl: './login-form.scss'
 })
-export class LoginForm {
+export class LoginForm implements OnInit{
+  
+  private readonly socialAuthService = inject(SocialAuthService);
   private readonly authService = inject(AuthService);
   private readonly router = inject(Router);
   private readonly snackBar = inject(MatSnackBar);
@@ -51,6 +57,30 @@ export class LoginForm {
   togglePasswordVisibility(event: MouseEvent): void {
     this.hidePassword.update(value => !value);
     event.stopPropagation();
+  }
+
+  ngOnInit() {
+    // Usamos o SOCIAL para capturar o login do Google
+    this.socialAuthService.authState.subscribe((googleUser) => {
+      if (googleUser && googleUser.idToken && !this.authService.isLoggedIn()) {
+        console.log('Google Token:', googleUser.idToken);
+        
+        // Agora usamos o SEU serviço para mandar esse token pro NestJS
+        this.authService.loginWithGoogle(googleUser.idToken).subscribe({
+          next: (res: any) => {
+            this.router.navigate(['app/dashboard']);
+        },
+          error: (err: any) => {
+            this.snackBar.open('Erro na autenticação social', 'Fechar', { duration: 5000 });
+        }
+        
+        });
+        }else if (googleUser && !googleUser.idToken) {
+        // Caso raro: o Google logou mas não mandou o Token de Identidade
+        console.error('Usuário autenticado, mas o idToken não foi gerado.');
+        this.snackBar.open('Erro técnico com o Google. Tente novamente.', 'Fechar');
+    }
+    });
   }
 
   onSubmit(): void {

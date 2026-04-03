@@ -1,18 +1,23 @@
 // auth/auth.service.ts
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable, InternalServerErrorException, UnauthorizedException } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import { UsersService } from 'src/users/users.service';
 import { LoginDto, MinimalRegisterDto } from './dto/auth.dto';
-import { CreateUserDto } from 'src/users/dto/user.dto';
 import { MailerService } from '@nestjs-modules/mailer';
+import { OAuth2Client } from 'google-auth-library';
+
 
 @Injectable()
 export class AuthService {
+
+  private googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+  
   constructor(
     private readonly usersService: UsersService,
     private readonly jwtService: JwtService,
     private readonly mailerService: MailerService
+    
   ) { }
 
  async register(registerDto: MinimalRegisterDto): Promise<string> {
@@ -104,4 +109,61 @@ export class AuthService {
       access_token: await this.jwtService.signAsync(payload),
     };
   }
+
+  async loginWithGoogle(token: string): Promise<{ access_token: string }> {
+    try {
+      // Valida o token com o servidor do Google
+      const ticket = await this.googleClient.verifyIdToken({
+        idToken: token,
+        audience: process.env.GOOGLE_CLIENT_ID,
+      });
+
+      const payloadGoogle = ticket.getPayload();
+      if (!payloadGoogle || !payloadGoogle.email) {
+        throw new UnauthorizedException('Token do Google inválido');
+      }
+
+      // Busca o usuário no banco (pelo e-mail que o Google garantiu que é dele)
+      let user = await this.usersService.findByEmail(payloadGoogle.email);
+
+      // Se o usuário não existe, faz o "Silent Registration"
+      if (!user) {
+        user = await this.usersService.create({
+          email: payloadGoogle.email,
+          name: payloadGoogle.name || 'Usuário Google',
+          password: Math.random().toString(36).slice(-10), // Senha aleatória "dummy"
+        });
+
+        // Como o Google já validou o e-mail, marcamos como verificado direto
+        await this.usersService.markEmailAsVerified(user.id);
+        
+        // Recarrega o usuário para pegar as roles/relações corretamente
+        user = await this.usersService.findByEmail(payloadGoogle.email);
+      }
+      if (!user) {
+        throw new InternalServerErrorException('Erro ao processar ou criar usuário via Google');
+      }
+      // Gera o JWT com o MESMO payload do seu login por senha
+      const payload = { 
+        sub: user.id, 
+        name: user.name, 
+        email: user.email, 
+        role: user.role?.name || 'USER' // Fallback caso a role demore a carregar
+      };
+
+      return {
+        access_token: await this.jwtService.signAsync(payload),
+      };
+
+    } catch (error: unknown) {
+        // 1. Verificamos se o erro é uma instância de Error para acessar .message
+        const errorMessage = error instanceof Error ? error.message : 'Erro desconhecido';
+        
+        console.error('[AuthService Google] Erro:', errorMessage);
+
+        // 2. Lançamos a exceção do NestJS
+        throw new UnauthorizedException('Falha na autenticação com Google');
+    }
+  }
+
 }

@@ -86,7 +86,10 @@
           @if (isSubmitting()) {
             <mat-spinner [diameter]="18"></mat-spinner>
           } @else {
-            <mat-icon>refresh</mat-icon> Reenviar Código
+           <ng-container>
+            <mat-icon>refresh</mat-icon>
+              <span>Reenviar Código</span>
+            </ng-container>
           }
         </button>
         
