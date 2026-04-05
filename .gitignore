@@ -42,6 +42,7 @@ tmp/
 /libpeerconnection.log
 testem.log
 /typings/
+.angular/
 # Cache do Angular e builds
 **/frontend/.angular/
 **/frontend/dist/

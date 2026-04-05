@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<svg width="220" height="200" xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg">
+<svg width="240" height="220" xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg">
  <defs>
   <linearGradient id="aiFace" x1="0%" x2="100%" y1="0%" y2="100%">
    <stop offset="0%" stop-color="#e3f2fd"/>
@@ -16,7 +16,7 @@
  <!-- Texto completo empilhado ao lado das iniciais -->
  <g class="layer">
   <title>Layer 1</title>
-  <g id="svg_1" transform="matrix(3.28296, 0, 0, 3.35075, 110, 102)">
+  <g id="svg_1" transform="matrix(3.61325, 0, 0, 3.80767, 120, 114)">
    <!-- Cabeça do robô -->
    <path d="m-30,-20l18,-6l24,0l18,6l0,32l-18,14l-24,0l-18,-14l0,-32z" fill="url(#aiFace)" id="svg_2" stroke="#0d47a1" stroke-width="2"/>
    <!-- Olhos -->
