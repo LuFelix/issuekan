@@ -8,6 +8,7 @@ export interface DashboardColumnData {
   id: string;
   type: 'trello' | 'github';
   title: string;
+  description?: string;
   url: string;
   status?: string;
   labels?: string[];

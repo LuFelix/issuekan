@@ -1,1 +1,32 @@
-/* This is an empty SCSS file for RelayCardComponent */
+.description-preview {
+  font-size: 0.8125rem;
+  line-height: 1.5;
+  color: #94a3b8; // slate-400
+  
+  ::ng-deep {
+    ul {
+      list-style-type: disc;
+      padding-left: 1.25rem;
+      margin: 0.5rem 0;
+    }
+
+    li {
+      margin-bottom: 0.25rem;
+    }
+
+    p {
+      margin-bottom: 0.5rem;
+    }
+
+    a {
+      color: #60a5fa; // blue-400
+      text-decoration: underline;
+      pointer-events: none; // Disable links in preview
+    }
+  }
+}
+
+:host ::ng-deep .custom-dialog-container .mat-mdc-dialog-container .mdc-dialog__surface {
+  background-color: transparent;
+  box-shadow: none;
+}
