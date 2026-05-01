@@ -14,6 +14,8 @@ import { GeminiConnector } from './services/gemini/gemini.connector';
 import { CardClassifierService } from './services/gemini/card-classifier.service';
 import { QuestionGeneratorService } from './services/gemini/question-generator.service';
 import { AnswerCorrectorService } from './services/gemini/answer-corrector.service';
+import { DashboardController } from './dashboard.controller';
+import { DashboardService } from './dashboard.service';
 
 @Module({
   imports: [
@@ -29,8 +31,14 @@ import { AnswerCorrectorService } from './services/gemini/answer-corrector.servi
     CardClassifierService,
     QuestionGeneratorService,
     AnswerCorrectorService,
+    DashboardService,
   ],
-  controllers: [TrelloWebhookController, GithubWebhookController, IdeationController],
+  controllers: [
+    TrelloWebhookController,
+    GithubWebhookController,
+    IdeationController,
+    DashboardController,
+  ],
   exports: [
     TypeOrmModule,
     RelayService,
@@ -41,6 +49,7 @@ import { AnswerCorrectorService } from './services/gemini/answer-corrector.servi
     CardClassifierService,
     QuestionGeneratorService,
     AnswerCorrectorService,
+    DashboardService,
   ],
 })
 export class RelayModule {}

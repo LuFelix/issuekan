@@ -69,4 +69,20 @@ export class TrelloService {
       throw new Error('Failed to create Trello card');
     }
   }
+
+  async getCardById(cardId: string): Promise<any> {
+    const url = `https://api.trello.com/1/cards/${cardId}`;
+    try {
+      const response = await axios.get(url, {
+        params: {
+          key: this.trelloApiKey,
+          token: this.trelloToken,
+        },
+      });
+      return response.data;
+    } catch (error: any) {
+      this.logger.error(`Failed to fetch Trello card ${cardId}: ${error.message}`);
+      return null;
+    }
+  }
 }

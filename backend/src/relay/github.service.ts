@@ -79,4 +79,30 @@ export class GithubService {
       throw error;
     }
   }
+
+  async getIssueById(issueNumber: string): Promise<any> {
+    const githubToken = this.configService.get<string>("GITHUB_TOKEN");
+    const githubOwner = this.configService.get<string>("GITHUB_OWNER");
+    const githubRepo = this.configService.get<string>("GITHUB_REPO");
+
+    if (!githubToken || !githubOwner || !githubRepo) {
+      this.logger.error("GitHub credentials not found in .env");
+      throw new Error("GitHub credentials not configured.");
+    }
+
+    try {
+      const response = await axios.get(
+        `https://api.github.com/repos/${githubOwner}/${githubRepo}/issues/${issueNumber}`,
+        {
+          headers: {
+            Authorization: `Bearer ${githubToken}`,
+          },
+        },
+      );
+      return response.data;
+    } catch (error: any) {
+      this.logger.error(`Error fetching GitHub issue ${issueNumber}: ${error.message}`);
+      return null;
+    }
+  }
 }
