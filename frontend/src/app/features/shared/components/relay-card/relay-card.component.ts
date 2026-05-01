@@ -16,11 +16,17 @@ export class RelayCardComponent {
   @Output() transformToIssue = new EventEmitter<string>();
 
   getIcon(): string {
-    return this.cardData.type === 'trello' ? 'list_alt' : 'bug_report'; // Trello: list_alt, GitHub: bug_report
+    return this.cardData.type === 'trello' ? 'list_alt' : 'bug_report';
   }
 
-  getPlatformClass(): string {
-    return this.cardData.type === 'trello' ? 'tw-border-l-blue-500' : 'tw-border-l-purple-500';
+  getPlatformBorderClass(): string {
+    return this.cardData.type === 'trello' ? 'tw-border-l-blue-500/50' : 'tw-border-l-purple-500/50';
+  }
+
+  getBadgeClass(): string {
+    return this.cardData.type === 'trello' 
+      ? 'tw-bg-blue-500/10 tw-text-blue-400 tw-border tw-border-blue-500/20' 
+      : 'tw-bg-purple-500/10 tw-text-purple-400 tw-border tw-border-purple-500/20';
   }
 
   shouldShowTransformButton(): boolean {

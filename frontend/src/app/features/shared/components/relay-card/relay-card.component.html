@@ -1,13 +1,38 @@
 
-<a [href]="cardData.url" target="_blank" class="tw-block tw-p-4 tw-mb-2 tw-rounded-lg tw-shadow-md tw-bg-gray-800 hover:tw-bg-gray-700 tw-transition-colors tw-duration-200 tw-border-l-4" [ngClass]="getPlatformClass()">
-  <div class="tw-flex tw-items-center tw-justify-between">
-    <div class="tw-flex tw-items-center">
-      <mat-icon class="tw-mr-2 tw-text-gray-400">{{ getIcon() }}</mat-icon>
-      <span class="tw-text-white tw-font-medium">{{ cardData.title }}</span>
+<div class="tw-block tw-p-5 tw-mb-3 tw-rounded-xl tw-shadow-sm tw-bg-slate-800/50 hover:tw-bg-slate-800 tw-transition-all tw-duration-300 tw-border tw-border-slate-700 hover:tw-border-slate-500 hover:tw-shadow-xl hover:tw--translate-y-1 tw-group" [ngClass]="getPlatformBorderClass()">
+  <!-- Header with Badge and Icon -->
+  <div class="tw-flex tw-items-center tw-justify-between tw-mb-3">
+    <div class="tw-flex tw-items-center tw-gap-2">
+      <span [ngClass]="getBadgeClass()" class="tw-text-[10px] tw-font-bold tw-uppercase tw-tracking-wider tw-px-2 tw-py-0.5 tw-rounded-full tw-shadow-sm">
+        {{ cardData.type }}
+      </span>
+      <mat-icon class="tw-text-slate-400 tw-scale-75">{{ getIcon() }}</mat-icon>
     </div>
-    <button *ngIf="shouldShowTransformButton()" (click)="emitTransformToIssue()" class="tw-ml-4 tw-bg-blue-600 hover:tw-bg-blue-700 tw-text-white tw-py-1 tw-px-3 tw-rounded tw-text-sm tw-whitespace-nowrap">
-      Transformar em Issue
+    
+    <button *ngIf="shouldShowTransformButton()" 
+            (click)="emitTransformToIssue()" 
+            title="Transformar em Issue"
+            class="tw-flex tw-items-center tw-gap-1 tw-text-slate-400 hover:tw-text-blue-400 tw-transition-colors tw-duration-200">
+      <mat-icon class="tw-scale-90">rocket_launch</mat-icon>
+      <span class="tw-text-xs tw-font-medium">Relay</span>
     </button>
   </div>
-  <p *ngIf="cardData.status" class="tw-text-gray-400 tw-text-sm tw-mt-1">Status: {{ cardData.status }}</p>
-</a>
+
+  <!-- Title Link -->
+  <div class="tw-mb-2">
+    <a [href]="cardData.url" 
+       target="_blank" 
+       class="tw-text-slate-100 tw-font-semibold tw-text-base hover:tw-text-blue-400 tw-transition-colors tw-line-clamp-2 tw-leading-snug">
+      {{ cardData.title }}
+    </a>
+  </div>
+
+  <!-- Footer/Status -->
+  <div class="tw-flex tw-items-center tw-justify-between tw-mt-4 tw-pt-3 tw-border-t tw-border-slate-700/50">
+    <p *ngIf="cardData.status" class="tw-text-slate-500 tw-text-xs tw-flex tw-items-center tw-gap-1">
+      <span class="tw-w-1.5 tw-h-1.5 tw-rounded-full tw-bg-slate-500"></span>
+      {{ cardData.status }}
+    </p>
+    <span class="tw-text-[10px] tw-text-slate-600 tw-font-mono uppercase">#{{ cardData.id.substring(0, 6) }}</span>
+  </div>
+</div>
