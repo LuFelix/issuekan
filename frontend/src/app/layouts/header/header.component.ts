@@ -49,7 +49,11 @@ export class HeaderComponent {
 
   private applyTheme(theme: 'dark' | 'light') {
     this.currentTheme = theme;
-    document.documentElement.setAttribute('data-theme', theme);
+    if (theme === 'dark') {
+      document.documentElement.setAttribute('data-theme', 'dark');
+    } else {
+      document.documentElement.removeAttribute('data-theme');
+    }
     localStorage.setItem('theme', theme);
   }
 
