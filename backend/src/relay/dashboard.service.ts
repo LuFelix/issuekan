@@ -1,4 +1,3 @@
-
 import { Injectable, Logger } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
@@ -10,6 +9,7 @@ export interface DashboardColumn {
   id: string;
   type: "trello" | "github";
   title: string;
+  description?: string;
   url: string;
   status?: string;
   labels?: string[]; // Adicionado labels para o GitHub Issue
@@ -53,8 +53,9 @@ export class DashboardService {
       id: card.id,
       type: "trello",
       title: card.name,
+      description: card.desc,
       url: card.shortUrl,
-      status: card.idList,
+      status: "", // Trello backlog cards don't show status UUIDs
     }));
 
     // Process existing RelayLinks (GitHub Issues and Trello Cards linked to issues)
@@ -66,6 +67,7 @@ export class DashboardService {
           id: githubIssue.id.toString(),
           type: "github",
           title: githubIssue.title,
+          description: githubIssue.body,
           url: githubIssue.html_url,
           status: githubIssue.state,
           labels: githubIssue.labels?.map((label: { name: string }) => label.name) || [],
@@ -73,7 +75,7 @@ export class DashboardService {
 
         // Distribute based on the new logic
         if (cardData.status === "open" && !cardData.labels?.includes("QA")) {
-          dashboardData.Development.push(cardData); // Assuming Definition/Development combined into Doing
+          dashboardData.Development.push(cardData);
         } else if (cardData.status === "open" && cardData.labels?.includes("QA")) {
           dashboardData.QA.push(cardData);
         } else if (cardData.status === "closed") {

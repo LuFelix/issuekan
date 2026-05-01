@@ -1,19 +1,20 @@
 <div (click)="openDetails()" 
      class="tw-block tw-p-5 tw-mb-3 tw-rounded-xl tw-shadow-sm tw-bg-slate-700 tw-transition-all tw-duration-300 tw-border tw-border-slate-600 hover:tw-border-blue-500 hover:tw-shadow-xl hover:tw--translate-y-1 tw-group tw-cursor-pointer">
   
-  <!-- Header with External Link Badge and Icon -->
   <div class="tw-flex tw-items-center tw-justify-between tw-mb-3">
     <div class="tw-flex tw-items-center tw-gap-2">
+      
       <a [href]="cardData.url" 
          target="_blank" 
          (click)="$event.stopPropagation()"
          [ngClass]="getBadgeClass()" 
-         class="tw-inline-flex tw-items-center tw-justify-center tw-gap-1.5 tw-no-underline hover:tw-no-underline tw-px-2.5 tw-py-1 tw-rounded tw-shadow-sm hover:tw-opacity-80 tw-transition-opacity">
-        <span class="tw-text-[10px] tw-font-bold tw-uppercase tw-tracking-wider tw-leading-none tw-mt-[1px]">
+         class="tw-inline-flex tw-items-center tw-justify-center tw-gap-1.5 tw-px-2.5 tw-py-1 tw-rounded tw-no-underline hover:tw-no-underline hover:tw-opacity-80 tw-transition-opacity">
+        <span class="tw-text-[10px] tw-font-bold tw-uppercase tw-tracking-wider tw-flex tw-items-center" style="line-height: 1; padding-top: 1px;">
           {{ cardData.type }}
         </span>
-        <mat-icon class="tw-text-[14px] tw-h-[14px] tw-w-[14px] tw-leading-none tw-flex tw-items-center tw-justify-center">open_in_new</mat-icon>
+        <mat-icon style="font-size: 14px; width: 14px; height: 14px; line-height: 14px;">open_in_new</mat-icon>
       </a>
+
       <mat-icon class="tw-text-slate-400 tw-scale-75">{{ getIcon() }}</mat-icon>
     </div>
     
@@ -27,20 +28,17 @@
     }
   </div>
 
-  <!-- Title -->
   <div class="tw-mb-3">
     <h3 class="tw-text-slate-100 tw-font-bold tw-text-base group-hover:tw-text-blue-400 tw-transition-colors tw-leading-tight">
       {{ cardData.title }}
     </h3>
   </div>
 
-  <!-- Full Description Area -->
   @if (cardData.description) {
-    <div class="description-content tw-text-slate-300 tw-text-sm" [innerHTML]="cardData.description">
+    <div class="description-content tw-text-slate-300 tw-text-sm tw-mt-2" [innerHTML]="cardData.description">
     </div>
   }
 
-  <!-- Footer/Status (Sem UUID) -->
   @if (cardData.status) {
     <div class="tw-flex tw-items-center tw-justify-between tw-mt-4 tw-pt-3 tw-border-t tw-border-slate-600/50">
       <p class="tw-text-slate-400 tw-text-xs tw-flex tw-items-center tw-gap-1">
