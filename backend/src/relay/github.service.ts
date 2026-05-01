@@ -111,7 +111,26 @@ export class GithubService {
     }
   }
 
-  // Mantém o método original getOpenIssues para ser usado no dashboard.service
+  // Novo método para adicionar Label isolado corretamente
+  async addLabelToIssue(issueNumber: number, label: string): Promise<void> {
+    const repoOwner = 'LuFelix';
+    const repoName = 'issuekan';
+    const url = `https://api.github.com/repos/${repoOwner}/${repoName}/issues/${issueNumber}/labels`;
+
+    try {
+      await axios.post(url, { labels: [label] }, {
+        headers: {
+          Authorization: `Bearer ${this.githubToken}`,
+          'Accept': 'application/vnd.github.v3+json',
+        },
+      });
+      this.logger.log(`Label '${label}' adicionada à issue #${issueNumber} no GitHub.`);
+    } catch (error: any) {
+      this.logger.error(`Erro ao adicionar a label '${label}' à issue #${issueNumber}: ${(error as any).response?.data?.message || (error as any).message}`);
+    }
+  }
+
+  // Método original mantido intacto
   async getAllOpenIssuesForDashboard(): Promise<DashboardColumnData[]> {
     const repoOwner = 'LuFelix';
     const repoName = 'issuekan';
