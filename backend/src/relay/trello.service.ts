@@ -22,6 +22,7 @@ export class TrelloService {
   }
 
   private async getLists(): Promise<any[]> {
+    this.logger.debug(`Iniciando busca no Board ID: ${this.trelloBoardId}`);
     const url = `https://api.trello.com/1/boards/${this.trelloBoardId}/lists`;
     try {
       const response = await axios.get(url, {
@@ -94,8 +95,8 @@ export class TrelloService {
         return [];
       }
 
-      const backlogList = lists[0]; // Assume a primeira lista é o Backlog
-      const url = `https://api.trello.com/1/lists/${backlogList.id}/cards`;
+      const backlogListId = lists[0].id; // Pega o ID da primeira lista (Backlog)
+      const url = `https://api.trello.com/1/lists/${backlogListId}/cards`;
       const response = await axios.get(url, {
         params: {
           key: this.trelloApiKey,
@@ -104,7 +105,10 @@ export class TrelloService {
       });
       return response.data;
     } catch (error: any) {
-      this.logger.error(`Failed to fetch backlog cards from Trello: ${error.message}`);
+      this.logger.error(
+        `Failed to fetch backlog cards from Trello: `,
+        error.response?.data || error.message,
+      );
       return [];
     }
   }
