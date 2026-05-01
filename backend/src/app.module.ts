@@ -9,6 +9,7 @@ import { RolesModule } from './roles/roles.module';
 import { UsersModule } from './users/users.module';
 import { GlobalJwtModule } from './shared/global-jwt.module';
 import { SeedModule } from './seeds/seed.module';
+import { RelayModule } from './relay/relay.module';
 import { MailerModule } from '@nestjs-modules/mailer';
 
 @Module({
@@ -51,6 +52,7 @@ import { MailerModule } from '@nestjs-modules/mailer';
     UsersModule,
     GlobalJwtModule,
     SeedModule,
+    RelayModule,
   ],
   controllers: [AppController],
   providers: [AppService],
