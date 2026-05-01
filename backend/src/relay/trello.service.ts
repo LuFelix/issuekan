@@ -85,4 +85,27 @@ export class TrelloService {
       return null;
     }
   }
+
+  async getBacklogCards(): Promise<any[]> {
+    try {
+      const lists = await this.getLists();
+      if (!lists || lists.length === 0) {
+        this.logger.log("No lists found on Trello board. Returning empty array for backlog cards.");
+        return [];
+      }
+
+      const backlogList = lists[0]; // Assume a primeira lista é o Backlog
+      const url = `https://api.trello.com/1/lists/${backlogList.id}/cards`;
+      const response = await axios.get(url, {
+        params: {
+          key: this.trelloApiKey,
+          token: this.trelloToken,
+        },
+      });
+      return response.data;
+    } catch (error: any) {
+      this.logger.error(`Failed to fetch backlog cards from Trello: ${error.message}`);
+      return [];
+    }
+  }
 }
