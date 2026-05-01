@@ -13,7 +13,7 @@
   <div class="tw-bg-gray-800 tw-rounded-lg tw-shadow-md tw-p-4 tw-flex tw-flex-col">
     <h2 class="tw-text-lg tw-font-bold tw-mb-4 tw-sticky tw-top-0 tw-bg-gray-800 tw-z-10">Doing (GitHub - Open)</h2>
     <div class="tw-flex-grow tw-overflow-y-auto">
-      <app-relay-card *ngFor="let card of getDoingGithubIssues()"
+      <app-relay-card *ngFor="let card of dashboardData.Development"
         [cardData]="card"></app-relay-card>
     </div>
   </div>
