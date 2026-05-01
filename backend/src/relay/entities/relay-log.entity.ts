@@ -6,14 +6,20 @@ export class RelayLog {
   id!: string;
 
   @Column()
-  event!: string;
+   event!: string;
 
-  @Column({ type: "jsonb" })
-  payload!: object;
+   @Column({ type: "jsonb" })
+   payload!: object;
 
-  @Column({ nullable: true })
-  status!: string;
+   @Column({ nullable: true })
+   trelloCardId?: string;
 
-  @CreateDateColumn()
-  createdAt!: Date;
+   @Column({ nullable: true })
+   githubIssueId?: string;
+
+   @Column({ nullable: true })
+   status!: string;
+
+   @CreateDateColumn()
+   createdAt!: Date;
 }
