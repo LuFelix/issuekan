@@ -3,11 +3,11 @@ import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 @Entity()
 export class RelayLink {
   @PrimaryGeneratedColumn("uuid")
-  id: string;
+  id!: string;
 
   @Column({ unique: true })
-  trelloCardId: string;
+  trelloCardId!: string;
 
   @Column({ unique: true })
-  githubIssueId: string;
+  githubIssueId!: string;
 }
