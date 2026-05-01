@@ -1,96 +1,38 @@
-<div class="tw-grid tw-grid-cols-1 md:tw-grid-cols-2 lg:tw-grid-cols-5 tw-gap-4 tw-p-4 tw-min-h-screen tw-bg-gray-900 tw-text-white" *ngIf="dashboardData">
+<div class="tw-grid tw-grid-cols-1 md:tw-grid-cols-2 lg:tw-grid-cols-4 tw-gap-4 tw-p-4 tw-min-h-screen tw-bg-gray-900 tw-text-white" *ngIf="dashboardData">
   <!-- Backlog Column -->
-  <div class="tw-bg-gray-800 tw-rounded-lg tw-shadow-md tw-p-4">
-    <h2 class="tw-text-lg tw-font-bold tw-mb-4 tw-sticky tw-top-0 tw-bg-gray-800 tw-z-10">Backlog</h2>
-    <div class="tw-grid tw-grid-cols-2 tw-gap-2">
-      <div class="tw-col-span-1">
-        <h3 class="tw-text-md tw-font-semibold tw-mb-2 tw-text-blue-400">Trello</h3>
-        <app-relay-card *ngFor="let card of dashboardData.Backlog | filterByType:
-              'trello'"
-          [cardData]="card"></app-relay-card>
-      </div>
-      <div class="tw-col-span-1">
-        <h3 class="tw-text-md tw-font-semibold tw-mb-2 tw-text-purple-400">GitHub</h3>
-        <app-relay-card *ngFor="let card of dashboardData.Backlog | filterByType:
-              'github'"
-          [cardData]="card"></app-relay-card>
-      </div>
+  <div class="tw-bg-gray-800 tw-rounded-lg tw-shadow-md tw-p-4 tw-flex tw-flex-col">
+    <h2 class="tw-text-lg tw-font-bold tw-mb-4 tw-sticky tw-top-0 tw-bg-gray-800 tw-z-10">Backlog (Trello)</h2>
+    <div class="tw-flex-grow tw-overflow-y-auto">
+      <app-relay-card *ngFor="let card of getBacklogTrelloCards()"
+        [cardData]="card"
+        (transformToIssue)="onTransformToIssue(card.id)"></app-relay-card>
     </div>
   </div>
 
-  <!-- Definition Column -->
-  <div class="tw-bg-gray-800 tw-rounded-lg tw-shadow-md tw-p-4">
-    <h2 class="tw-text-lg tw-font-bold tw-mb-4 tw-sticky tw-top-0 tw-bg-gray-800 tw-z-10">Definition</h2>
-    <div class="tw-grid tw-grid-cols-2 tw-gap-2">
-      <div class="tw-col-span-1">
-        <h3 class="tw-text-md tw-font-semibold tw-mb-2 tw-text-blue-400">Trello</h3>
-        <app-relay-card *ngFor="let card of dashboardData.Definition | filterByType:
-              'trello'"
-          [cardData]="card"></app-relay-card>
-      </div>
-      <div class="tw-col-span-1">
-        <h3 class="tw-text-md tw-font-semibold tw-mb-2 tw-text-purple-400">GitHub</h3>
-        <app-relay-card *ngFor="let card of dashboardData.Definition | filterByType:
-              'github'"
-          [cardData]="card"></app-relay-card>
-      </div>
-    </div>
-  </div>
-
-  <!-- Development Column -->
-  <div class="tw-bg-gray-800 tw-rounded-lg tw-shadow-md tw-p-4">
-    <h2 class="tw-text-lg tw-font-bold tw-mb-4 tw-sticky tw-top-0 tw-bg-gray-800 tw-z-10">Development</h2>
-    <div class="tw-grid tw-grid-cols-2 tw-gap-2">
-      <div class="tw-col-span-1">
-        <h3 class="tw-text-md tw-font-semibold tw-mb-2 tw-text-blue-400">Trello</h3>
-        <app-relay-card *ngFor="let card of dashboardData.Development | filterByType:
-              'trello'"
-          [cardData]="card"></app-relay-card>
-      </div>
-      <div class="tw-col-span-1">
-        <h3 class="tw-text-md tw-font-semibold tw-mb-2 tw-text-purple-400">GitHub</h3>
-        <app-relay-card *ngFor="let card of dashboardData.Development | filterByType:
-              'github'"
-          [cardData]="card"></app-relay-card>
-      </div>
+  <!-- Doing Column -->
+  <div class="tw-bg-gray-800 tw-rounded-lg tw-shadow-md tw-p-4 tw-flex tw-flex-col">
+    <h2 class="tw-text-lg tw-font-bold tw-mb-4 tw-sticky tw-top-0 tw-bg-gray-800 tw-z-10">Doing (GitHub - Open)</h2>
+    <div class="tw-flex-grow tw-overflow-y-auto">
+      <app-relay-card *ngFor="let card of getDoingGithubIssues()"
+        [cardData]="card"></app-relay-card>
     </div>
   </div>
 
   <!-- QA Column -->
-  <div class="tw-bg-gray-800 tw-rounded-lg tw-shadow-md tw-p-4">
-    <h2 class="tw-text-lg tw-font-bold tw-mb-4 tw-sticky tw-top-0 tw-bg-gray-800 tw-z-10">QA</h2>
-    <div class="tw-grid tw-grid-cols-2 tw-gap-2">
-      <div class="tw-col-span-1">
-        <h3 class="tw-text-md tw-font-semibold tw-mb-2 tw-text-blue-400">Trello</h3>
-        <app-relay-card *ngFor="let card of dashboardData.QA | filterByType:
-              'trello'"
-          [cardData]="card"></app-relay-card>
-      </div>
-      <div class="tw-col-span-1">
-        <h3 class="tw-text-md tw-font-semibold tw-mb-2 tw-text-purple-400">GitHub</h3>
-        <app-relay-card *ngFor="let card of dashboardData.QA | filterByType:
-              'github'"
-          [cardData]="card"></app-relay-card>
-      </div>
+  <div class="tw-bg-gray-800 tw-rounded-lg tw-shadow-md tw-p-4 tw-flex tw-flex-col">
+    <h2 class="tw-text-lg tw-font-bold tw-mb-4 tw-sticky tw-top-0 tw-bg-gray-800 tw-z-10">QA (GitHub - Open with Label)</h2>
+    <div class="tw-flex-grow tw-overflow-y-auto">
+      <app-relay-card *ngFor="let card of getQaGithubIssues()"
+        [cardData]="card"></app-relay-card>
     </div>
   </div>
 
   <!-- Done Column -->
-  <div class="tw-bg-gray-800 tw-rounded-lg tw-shadow-md tw-p-4">
-    <h2 class="tw-text-lg tw-font-bold tw-mb-4 tw-sticky tw-top-0 tw-bg-gray-800 tw-z-10">Done</h2>
-    <div class="tw-grid tw-grid-cols-2 tw-gap-2">
-      <div class="tw-col-span-1">
-        <h3 class="tw-text-md tw-font-semibold tw-mb-2 tw-text-blue-400">Trello</h3>
-        <app-relay-card *ngFor="let card of dashboardData.Done | filterByType:
-              'trello'"
-          [cardData]="card"></app-relay-card>
-      </div>
-      <div class="tw-col-span-1">
-        <h3 class="tw-text-md tw-font-semibold tw-mb-2 tw-text-purple-400">GitHub</h3>
-        <app-relay-card *ngFor="let card of dashboardData.Done | filterByType:
-              'github'"
-          [cardData]="card"></app-relay-card>
-      </div>
+  <div class="tw-bg-gray-800 tw-rounded-lg tw-shadow-md tw-p-4 tw-flex tw-flex-col">
+    <h2 class="tw-text-lg tw-font-bold tw-mb-4 tw-sticky tw-top-0 tw-bg-gray-800 tw-z-10">Done (GitHub - Closed)</h2>
+    <div class="tw-flex-grow tw-overflow-y-auto">
+      <app-relay-card *ngFor="let card of getDoneGithubIssues()"
+        [cardData]="card"></app-relay-card>
     </div>
   </div>
 </div>

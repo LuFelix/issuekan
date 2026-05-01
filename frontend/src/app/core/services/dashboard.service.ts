@@ -10,6 +10,7 @@ export interface DashboardColumnData {
   title: string;
   url: string;
   status?: string;
+  labels?: string[];
 }
 
 export interface DashboardData {

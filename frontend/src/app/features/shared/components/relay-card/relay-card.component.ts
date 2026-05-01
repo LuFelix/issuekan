@@ -1,5 +1,5 @@
 
-import { Component, Input } from '@angular/core';
+import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { DashboardColumnData } from '../../../../core/services/dashboard.service';
@@ -13,6 +13,7 @@ import { DashboardColumnData } from '../../../../core/services/dashboard.service
 })
 export class RelayCardComponent {
   @Input() cardData!: DashboardColumnData;
+  @Output() transformToIssue = new EventEmitter<string>();
 
   getIcon(): string {
     return this.cardData.type === 'trello' ? 'list_alt' : 'bug_report'; // Trello: list_alt, GitHub: bug_report
@@ -20,5 +21,13 @@ export class RelayCardComponent {
 
   getPlatformClass(): string {
     return this.cardData.type === 'trello' ? 'tw-border-l-blue-500' : 'tw-border-l-purple-500';
+  }
+
+  shouldShowTransformButton(): boolean {
+    return this.cardData.type === 'trello';
+  }
+
+  emitTransformToIssue(): void {
+    this.transformToIssue.emit(this.cardData.id);
   }
 }
