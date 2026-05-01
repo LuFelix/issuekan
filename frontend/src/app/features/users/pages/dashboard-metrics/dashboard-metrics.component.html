@@ -1,40 +1,96 @@
-<div class="dashboard-grid tw-grid tw-grid-cols-1 md:tw-grid-cols-2 xl:tw-grid-cols-4 tw-gap-5">
-  <mat-card class="dashboard-card">
-    <mat-card-header>
-      <mat-card-title>Usuários Totais</mat-card-title>
-    </mat-card-header>
-    <mat-card-content>
-      <p class="metric">{{ totalUsers }}</p>
-    </mat-card-content>
-  </mat-card>
+<div class="tw-grid tw-grid-cols-1 md:tw-grid-cols-2 lg:tw-grid-cols-5 tw-gap-4 tw-p-4 tw-min-h-screen tw-bg-gray-900 tw-text-white" *ngIf="dashboardData">
+  <!-- Backlog Column -->
+  <div class="tw-bg-gray-800 tw-rounded-lg tw-shadow-md tw-p-4">
+    <h2 class="tw-text-lg tw-font-bold tw-mb-4 tw-sticky tw-top-0 tw-bg-gray-800 tw-z-10">Backlog</h2>
+    <div class="tw-grid tw-grid-cols-2 tw-gap-2">
+      <div class="tw-col-span-1">
+        <h3 class="tw-text-md tw-font-semibold tw-mb-2 tw-text-blue-400">Trello</h3>
+        <app-relay-card *ngFor="let card of dashboardData.Backlog | filterByType:
+              'trello'"
+          [cardData]="card"></app-relay-card>
+      </div>
+      <div class="tw-col-span-1">
+        <h3 class="tw-text-md tw-font-semibold tw-mb-2 tw-text-purple-400">GitHub</h3>
+        <app-relay-card *ngFor="let card of dashboardData.Backlog | filterByType:
+              'github'"
+          [cardData]="card"></app-relay-card>
+      </div>
+    </div>
+  </div>
 
-  <mat-card class="dashboard-card">
-    <mat-card-header>
-      <mat-card-title>Novos Usuários (7d)</mat-card-title>
-    </mat-card-header>
-    <mat-card-content>
-      <p class="metric">{{ newUsersLastWeek }}</p>
-    </mat-card-content>
-  </mat-card>
+  <!-- Definition Column -->
+  <div class="tw-bg-gray-800 tw-rounded-lg tw-shadow-md tw-p-4">
+    <h2 class="tw-text-lg tw-font-bold tw-mb-4 tw-sticky tw-top-0 tw-bg-gray-800 tw-z-10">Definition</h2>
+    <div class="tw-grid tw-grid-cols-2 tw-gap-2">
+      <div class="tw-col-span-1">
+        <h3 class="tw-text-md tw-font-semibold tw-mb-2 tw-text-blue-400">Trello</h3>
+        <app-relay-card *ngFor="let card of dashboardData.Definition | filterByType:
+              'trello'"
+          [cardData]="card"></app-relay-card>
+      </div>
+      <div class="tw-col-span-1">
+        <h3 class="tw-text-md tw-font-semibold tw-mb-2 tw-text-purple-400">GitHub</h3>
+        <app-relay-card *ngFor="let card of dashboardData.Definition | filterByType:
+              'github'"
+          [cardData]="card"></app-relay-card>
+      </div>
+    </div>
+  </div>
 
-  <mat-card class="dashboard-card">
-    <mat-card-header>
-      <mat-card-title>Convites Pendentes</mat-card-title>
-    </mat-card-header>
-    <mat-card-content>
-      <p class="metric">{{ pendingInvites }}</p>
-    </mat-card-content>
-  </mat-card>
+  <!-- Development Column -->
+  <div class="tw-bg-gray-800 tw-rounded-lg tw-shadow-md tw-p-4">
+    <h2 class="tw-text-lg tw-font-bold tw-mb-4 tw-sticky tw-top-0 tw-bg-gray-800 tw-z-10">Development</h2>
+    <div class="tw-grid tw-grid-cols-2 tw-gap-2">
+      <div class="tw-col-span-1">
+        <h3 class="tw-text-md tw-font-semibold tw-mb-2 tw-text-blue-400">Trello</h3>
+        <app-relay-card *ngFor="let card of dashboardData.Development | filterByType:
+              'trello'"
+          [cardData]="card"></app-relay-card>
+      </div>
+      <div class="tw-col-span-1">
+        <h3 class="tw-text-md tw-font-semibold tw-mb-2 tw-text-purple-400">GitHub</h3>
+        <app-relay-card *ngFor="let card of dashboardData.Development | filterByType:
+              'github'"
+          [cardData]="card"></app-relay-card>
+      </div>
+    </div>
+  </div>
 
-   <mat-card class="dashboard-card">
-    <mat-card-header>
-      <mat-card-title>Certificações Ativas</mat-card-title>
-    </mat-card-header>
-    <mat-card-content>
-      <p class="metric">{{ activeCertifications }}</p>
-    </mat-card-content>
-  </mat-card>
+  <!-- QA Column -->
+  <div class="tw-bg-gray-800 tw-rounded-lg tw-shadow-md tw-p-4">
+    <h2 class="tw-text-lg tw-font-bold tw-mb-4 tw-sticky tw-top-0 tw-bg-gray-800 tw-z-10">QA</h2>
+    <div class="tw-grid tw-grid-cols-2 tw-gap-2">
+      <div class="tw-col-span-1">
+        <h3 class="tw-text-md tw-font-semibold tw-mb-2 tw-text-blue-400">Trello</h3>
+        <app-relay-card *ngFor="let card of dashboardData.QA | filterByType:
+              'trello'"
+          [cardData]="card"></app-relay-card>
+      </div>
+      <div class="tw-col-span-1">
+        <h3 class="tw-text-md tw-font-semibold tw-mb-2 tw-text-purple-400">GitHub</h3>
+        <app-relay-card *ngFor="let card of dashboardData.QA | filterByType:
+              'github'"
+          [cardData]="card"></app-relay-card>
+      </div>
+    </div>
+  </div>
 
-  <!-- Adicione mais cards conforme necessário -->
-
+  <!-- Done Column -->
+  <div class="tw-bg-gray-800 tw-rounded-lg tw-shadow-md tw-p-4">
+    <h2 class="tw-text-lg tw-font-bold tw-mb-4 tw-sticky tw-top-0 tw-bg-gray-800 tw-z-10">Done</h2>
+    <div class="tw-grid tw-grid-cols-2 tw-gap-2">
+      <div class="tw-col-span-1">
+        <h3 class="tw-text-md tw-font-semibold tw-mb-2 tw-text-blue-400">Trello</h3>
+        <app-relay-card *ngFor="let card of dashboardData.Done | filterByType:
+              'trello'"
+          [cardData]="card"></app-relay-card>
+      </div>
+      <div class="tw-col-span-1">
+        <h3 class="tw-text-md tw-font-semibold tw-mb-2 tw-text-purple-400">GitHub</h3>
+        <app-relay-card *ngFor="let card of dashboardData.Done | filterByType:
+              'github'"
+          [cardData]="card"></app-relay-card>
+      </div>
+    </div>
+  </div>
 </div>
