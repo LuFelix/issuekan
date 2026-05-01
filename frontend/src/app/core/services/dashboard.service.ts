@@ -13,6 +13,7 @@ export interface DashboardColumnData {
   url: string;
   status?: string;
   labels?: string[];
+  hasActiveBranch?: boolean;
 }
 
 export interface DashboardData {

@@ -18,6 +18,7 @@ interface DashboardColumnData {
   url: string;
   type: string;
   status?: string;
+  hasActiveBranch?: boolean;
 }
 
 @Injectable()
@@ -33,6 +34,26 @@ export class GithubService {
       this.logger.error('GITHUB_TOKEN não está configurado nas variáveis de ambiente.');
     } else {
       this.logger.debug(`GITHUB_TOKEN lido com sucesso (primeiros 4 caracteres): ${this.githubToken.substring(0, 4)}****`);
+    }
+  }
+
+  private async getActiveBranches(): Promise<string[]> {
+    const repoOwner = 'LuFelix';
+    const repoName = 'issuekan';
+    const url = `https://api.github.com/repos/${repoOwner}/${repoName}/branches`;
+
+    try {
+      this.logger.debug(`Buscando branches ativas do GitHub em: ${url}`);
+      const response = await axios.get<any[]>(url, {
+        headers: {
+          Authorization: `Bearer ${this.githubToken}`,
+          'Accept': 'application/vnd.github.v3+json',
+        },
+      });
+      return response.data.map(b => b.name);
+    } catch (error: any) {
+      this.logger.error(`Erro ao buscar branches ativas do GitHub: ${(error as any).response?.data?.message || (error as any).message}`);
+      return [];
     }
   }
 
@@ -94,6 +115,8 @@ export class GithubService {
     const url = `https://api.github.com/repos/${repoOwner}/${repoName}/issues?state=open`;
 
     try {
+      const activeBranches = await this.getActiveBranches();
+
       const response = await axios.get<GithubIssue[]>(url, {
         headers: {
           Authorization: `Bearer ${this.githubToken}`,
@@ -101,14 +124,18 @@ export class GithubService {
         },
       });
 
-      return response.data.map(issue => ({
-        id: String(issue.number),
-        title: issue.title,
-        description: issue.body || '',
-        url: issue.html_url,
-        type: 'github',
-        status: issue.state || undefined,
-      }));
+      return response.data.map(issue => {
+        const isActive = activeBranches.some(branch => branch.includes(`/${issue.number}-`));
+        return {
+          id: String(issue.number),
+          title: issue.title,
+          description: issue.body || '',
+          url: issue.html_url,
+          type: 'github',
+          status: issue.state || undefined,
+          hasActiveBranch: isActive,
+        };
+      });
     } catch (error: any) {
       this.logger.error(`Erro ao buscar issues do GitHub: ${(error as any).response?.data || (error as any).message}`);
       return [];

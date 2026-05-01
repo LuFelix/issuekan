@@ -13,6 +13,7 @@ export interface DashboardColumn {
   url: string;
   status?: string;
   labels?: string[]; // Adicionado labels para o GitHub Issue
+  hasActiveBranch?: boolean;
 }
 
 export interface DashboardData {
