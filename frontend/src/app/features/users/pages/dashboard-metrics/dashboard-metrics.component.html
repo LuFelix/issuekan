@@ -1,40 +1,38 @@
-<div class="dashboard-grid tw-grid tw-grid-cols-1 md:tw-grid-cols-2 xl:tw-grid-cols-4 tw-gap-5">
-  <mat-card class="dashboard-card">
-    <mat-card-header>
-      <mat-card-title>Usuários Totais</mat-card-title>
-    </mat-card-header>
-    <mat-card-content>
-      <p class="metric">{{ totalUsers }}</p>
-    </mat-card-content>
-  </mat-card>
+<div class="tw-grid tw-grid-cols-1 md:tw-grid-cols-2 lg:tw-grid-cols-4 tw-gap-4 tw-p-4 tw-min-h-screen tw-bg-gray-900 tw-text-white" *ngIf="dashboardData">
+  <!-- Backlog Column -->
+  <div class="tw-bg-gray-800 tw-rounded-lg tw-shadow-md tw-p-4 tw-flex tw-flex-col">
+    <h2 class="tw-text-lg tw-font-bold tw-mb-4 tw-sticky tw-top-0 tw-bg-gray-800 tw-z-10">Backlog (Trello)</h2>
+    <div class="tw-flex-grow tw-overflow-y-auto">
+      <app-relay-card *ngFor="let card of getBacklogTrelloCards()"
+        [cardData]="card"
+        (transformToIssue)="onTransformToIssue(card.id)"></app-relay-card>
+    </div>
+  </div>
 
-  <mat-card class="dashboard-card">
-    <mat-card-header>
-      <mat-card-title>Novos Usuários (7d)</mat-card-title>
-    </mat-card-header>
-    <mat-card-content>
-      <p class="metric">{{ newUsersLastWeek }}</p>
-    </mat-card-content>
-  </mat-card>
+  <!-- Doing Column -->
+  <div class="tw-bg-gray-800 tw-rounded-lg tw-shadow-md tw-p-4 tw-flex tw-flex-col">
+    <h2 class="tw-text-lg tw-font-bold tw-mb-4 tw-sticky tw-top-0 tw-bg-gray-800 tw-z-10">Doing (GitHub - Open)</h2>
+    <div class="tw-flex-grow tw-overflow-y-auto">
+      <app-relay-card *ngFor="let card of getDoingGithubIssues()"
+        [cardData]="card"></app-relay-card>
+    </div>
+  </div>
 
-  <mat-card class="dashboard-card">
-    <mat-card-header>
-      <mat-card-title>Convites Pendentes</mat-card-title>
-    </mat-card-header>
-    <mat-card-content>
-      <p class="metric">{{ pendingInvites }}</p>
-    </mat-card-content>
-  </mat-card>
+  <!-- QA Column -->
+  <div class="tw-bg-gray-800 tw-rounded-lg tw-shadow-md tw-p-4 tw-flex tw-flex-col">
+    <h2 class="tw-text-lg tw-font-bold tw-mb-4 tw-sticky tw-top-0 tw-bg-gray-800 tw-z-10">QA (GitHub - Open with Label)</h2>
+    <div class="tw-flex-grow tw-overflow-y-auto">
+      <app-relay-card *ngFor="let card of getQaGithubIssues()"
+        [cardData]="card"></app-relay-card>
+    </div>
+  </div>
 
-   <mat-card class="dashboard-card">
-    <mat-card-header>
-      <mat-card-title>Certificações Ativas</mat-card-title>
-    </mat-card-header>
-    <mat-card-content>
-      <p class="metric">{{ activeCertifications }}</p>
-    </mat-card-content>
-  </mat-card>
-
-  <!-- Adicione mais cards conforme necessário -->
-
+  <!-- Done Column -->
+  <div class="tw-bg-gray-800 tw-rounded-lg tw-shadow-md tw-p-4 tw-flex tw-flex-col">
+    <h2 class="tw-text-lg tw-font-bold tw-mb-4 tw-sticky tw-top-0 tw-bg-gray-800 tw-z-10">Done (GitHub - Closed)</h2>
+    <div class="tw-flex-grow tw-overflow-y-auto">
+      <app-relay-card *ngFor="let card of getDoneGithubIssues()"
+        [cardData]="card"></app-relay-card>
+    </div>
+  </div>
 </div>
