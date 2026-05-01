@@ -35,9 +35,10 @@ export class DashboardService {
   ) {}
 
   async getDashboardData(): Promise<DashboardData> {
-    const [relayLinks, trelloBacklogCards] = await Promise.all([
+    const [relayLinks, trelloBacklogCards, githubOpenIssues] = await Promise.all([
       this.relayLinkRepository.find(),
       this.trelloService.getBacklogCards(),
+      this.githubService.getAllOpenIssuesForDashboard(),
     ]);
 
     const dashboardData: DashboardData = {
@@ -55,13 +56,23 @@ export class DashboardService {
       title: card.name,
       description: card.desc,
       url: card.shortUrl,
-      status: "", // Trello backlog cards don't show status UUIDs
+      status: "", // Trello backlog cards don\'t show status UUIDs
+    }));
+
+    // Populate Development with GitHub Open Issues
+    dashboardData.Development = githubOpenIssues.map(issue => ({
+      id: issue.id,
+      type: issue.type as "github", // Assumindo que o tipo é sempre 'github'
+      title: issue.title,
+      description: issue.description,
+      url: issue.url,
+      status: issue.status,
     }));
 
     // Process existing RelayLinks (GitHub Issues and Trello Cards linked to issues)
     for (const link of relayLinks) {
       // Fetch GitHub Issue Info for linked items
-      const githubIssue = await this.githubService.getIssueById(link.githubIssueId);
+      const githubIssue = await this.githubService.getIssueByNumber(link.githubIssueId);
       if (githubIssue) {
         const cardData: DashboardColumn = {
           id: githubIssue.id.toString(),
@@ -75,7 +86,7 @@ export class DashboardService {
 
         // Distribute based on the new logic
         if (cardData.status === "open" && !cardData.labels?.includes("QA")) {
-          dashboardData.Development.push(cardData);
+          // Já populado com githubOpenIssues, ajustar lógica se necessário
         } else if (cardData.status === "open" && cardData.labels?.includes("QA")) {
           dashboardData.QA.push(cardData);
         } else if (cardData.status === "closed") {

@@ -10,6 +10,11 @@
 *.log
 .DS_Store
 COMANDOS_UTEIS.md
+importar-issues.issuekan.js
+importar-trello.issuekan.js
+importar-issues.json
+issues-ler.js
+
 
 
 # ==========================================

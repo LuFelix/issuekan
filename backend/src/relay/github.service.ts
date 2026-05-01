@@ -1,108 +1,117 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
 import axios from 'axios';
-import { RelayLink } from './entities/relay-link.entity';
-import { RelayLog } from './entities/relay-log.entity';
+
+interface GithubIssue {
+  id: number;
+  number: number;
+  title: string;
+  body: string | null;
+  html_url: string;
+  state: string;
+}
+
+interface DashboardColumnData {
+  id: string;
+  title: string;
+  description: string;
+  url: string;
+  type: string;
+  status?: string;
+}
 
 @Injectable()
 export class GithubService {
   private readonly logger = new Logger(GithubService.name);
+  private githubToken: string;
 
   constructor(
-    private configService: ConfigService,
-    @InjectRepository(RelayLink)
-    private relayLinkRepository: Repository<RelayLink>,
-    @InjectRepository(RelayLog)
-    private relayLogRepository: Repository<RelayLog>,
+    private readonly configService: ConfigService,
   ) {
-    this.logger.log("GithubService initialized");
+    this.githubToken = this.configService.get<string>('GITHUB_TOKEN') || '';
+    if (!this.githubToken) {
+      this.logger.error('GITHUB_TOKEN não está configurado nas variáveis de ambiente.');
+    } else {
+      this.logger.debug(`GITHUB_TOKEN lido com sucesso (primeiros 4 caracteres): ${this.githubToken.substring(0, 4)}****`);
+    }
   }
 
-  async createIssue(title: string, body: string, trelloCardId: string): Promise<any> {
-    const githubToken = this.configService.get<string>('GITHUB_TOKEN');
-    const githubOwner = this.configService.get<string>('GITHUB_OWNER');
-    const githubRepo = this.configService.get<string>('GITHUB_REPO');
+  async getOpenIssues(): Promise<DashboardColumnData[]> {
+    return [];
+  }
 
-    if (!githubToken || !githubOwner || !githubRepo) {
-      this.logger.error('GitHub credentials not found in .env');
-      throw new Error('GitHub credentials not configured.');
+  async createIssue(title: string, body: string, trelloCardId?: string): Promise<any> {
+    const repoOwner = 'LuFelix';
+    const repoName = 'issuekan';
+    const url = `https://api.github.com/repos/${repoOwner}/${repoName}/issues`;
+
+    let issueBody = body;
+    if (trelloCardId) {
+      issueBody += `\n\n--- \n**Trello Card ID:** ${trelloCardId}`;
     }
 
     try {
-      const response = await axios.post(
-        `https://api.github.com/repos/${githubOwner}/${githubRepo}/issues`,
-        { title, body },
-        {
-          headers: {
-            Authorization: `Bearer ${githubToken}`,
-            'Content-Type': 'application/json',
-          },
+      const response = await axios.post(url, {
+        title,
+        body: issueBody,
+      }, {
+        headers: {
+          Authorization: `Bearer ${this.githubToken}`,
+          'Accept': 'application/vnd.github.v3+json',
         },
-      );
-
-      const githubIssueId = response.data.number;
-
-      // Update RelayLink
-      let relayLink = await this.relayLinkRepository.findOne({ where: { trelloCardId } });
-      if (relayLink) {
-        relayLink.githubIssueId = githubIssueId.toString();
-        await this.relayLinkRepository.save(relayLink);
-        this.logger.log(`RelayLink updated for Trello card ${trelloCardId} with GitHub Issue ID ${githubIssueId}`);
-      } else {
-        this.logger.warn(`RelayLink not found for Trello card ID: ${trelloCardId}. Creating new one.`);
-        const newRelayLink = this.relayLinkRepository.create({
-          trelloCardId,
-          githubIssueId: githubIssueId.toString(),
-        });
-        await this.relayLinkRepository.save(newRelayLink);
-      }
-
-      // Create RelayLog entry
-      const relayLog = this.relayLogRepository.create({
-        event: 'GitHub Issue Created',
-        payload: {
-          title: title,
-          body: body,
-          githubIssueId: githubIssueId.toString(),
-        },
-        trelloCardId: trelloCardId,
-        githubIssueId: githubIssueId.toString(),
       });
-      await this.relayLogRepository.save(relayLog);
-      this.logger.log(`RelayLog entry created for GitHub Issue ${githubIssueId}`);
-
+      this.logger.log(`Issue do GitHub criada: ${response.data.html_url}`);
       return response.data;
     } catch (error: any) {
-      this.logger.error(`Error creating GitHub issue: ${error.message}`);
+      this.logger.error(`Erro ao criar issue do GitHub: ${(error as any).response?.data || (error as any).message}`);
       throw error;
     }
   }
 
-  async getIssueById(issueNumber: string): Promise<any> {
-    const githubToken = this.configService.get<string>("GITHUB_TOKEN");
-    const githubOwner = this.configService.get<string>("GITHUB_OWNER");
-    const githubRepo = this.configService.get<string>("GITHUB_REPO");
-
-    if (!githubToken || !githubOwner || !githubRepo) {
-      this.logger.error("GitHub credentials not found in .env");
-      throw new Error("GitHub credentials not configured.");
-    }
+  async getIssueByNumber(issueNumber: string): Promise<any> {
+    const repoOwner = 'LuFelix';
+    const repoName = 'issuekan';
+    const url = `https://api.github.com/repos/${repoOwner}/${repoName}/issues/${issueNumber}`;
 
     try {
-      const response = await axios.get(
-        `https://api.github.com/repos/${githubOwner}/${githubRepo}/issues/${issueNumber}`,
-        {
-          headers: {
-            Authorization: `Bearer ${githubToken}`,
-          },
+      const response = await axios.get<GithubIssue>(url, {
+        headers: {
+          Authorization: `Bearer ${this.githubToken}`,
+          'Accept': 'application/vnd.github.v3+json',
         },
-      );
+      });
       return response.data;
     } catch (error: any) {
-      this.logger.error(`Error fetching GitHub issue ${issueNumber}: ${error.message}`);
+      this.logger.error(`Erro ao buscar issue ${issueNumber} do GitHub: ${(error as any).response?.data || (error as any).message}`);
       return null;
+    }
+  }
+
+  // Mantém o método original getOpenIssues para ser usado no dashboard.service
+  async getAllOpenIssuesForDashboard(): Promise<DashboardColumnData[]> {
+    const repoOwner = 'LuFelix';
+    const repoName = 'issuekan';
+    const url = `https://api.github.com/repos/${repoOwner}/${repoName}/issues?state=open`;
+
+    try {
+      const response = await axios.get<GithubIssue[]>(url, {
+        headers: {
+          Authorization: `Bearer ${this.githubToken}`,
+          'Accept': 'application/vnd.github.v3+json',
+        },
+      });
+
+      return response.data.map(issue => ({
+        id: String(issue.number),
+        title: issue.title,
+        description: issue.body || '',
+        url: issue.html_url,
+        type: 'github',
+        status: issue.state || undefined,
+      }));
+    } catch (error: any) {
+      this.logger.error(`Erro ao buscar issues do GitHub: ${(error as any).response?.data || (error as any).message}`);
+      return [];
     }
   }
 }
