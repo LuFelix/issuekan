@@ -5,6 +5,7 @@
   overflow-x: auto;
   min-height: 200px;
   border-radius: 4px;
+  background-color: var(--bg2);
 }
 
 /* Overlay de Loading */
@@ -14,7 +15,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(255, 255, 255, 0.7);
+  background: color-mix(in srgb, var(--bg) 80%, transparent);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -28,6 +29,7 @@
 
 table {
   width: 100%;
+  background-color: var(--bg2);
 }
 
 /* Colunas */
@@ -77,12 +79,22 @@ table {
 tr.mat-row {
   transition: background-color 0.2s;
   &:hover {
-    background-color: #f9f9ff;
+    background-color: var(--bg3);
   }
 }
 
 .mat-row .mat-cell[colspan] {
   text-align: center;
   padding: 48px 0;
-  color: #777;
+  color: var(--text2);
+}
+
+:host ::ng-deep .mat-mdc-table,
+:host ::ng-deep .mat-mdc-header-row,
+:host ::ng-deep .mat-mdc-row,
+:host ::ng-deep .mat-mdc-cell,
+:host ::ng-deep .mat-mdc-header-cell {
+  background-color: transparent;
+  color: var(--text);
+  border-bottom-color: var(--border);
 }

@@ -1,0 +1,36 @@
+Master PRD: Ecossistema IssueKan
+
+Visão Geral do Produto
+O IssueKan é uma esteira de automação e sincronização bidirecional. Ele elimina o atrito entre a área de negócios (que opera no Trello) e a área de desenvolvimento (que opera no GitHub), traduzindo linguagem natural em tarefas e mantendo os status sincronizados automaticamente via webhooks.
+
+Arquitetura Base (Dockerizada)
+
+    Banco de Dados: PostgreSQL (armazenamento de logs da esteira, mapeamento de IDs Trello <-> GitHub, e histórico de requisições).
+
+    Backend (NestJS): Atua como o "Relay". Recebe webhooks, processa regras de negócio e despacha chamadas para APIs externas.
+
+    Frontend (Angular): Interface de controle da esteira, dashboard de logs e interface de chat para o "Motor de Ideação".
+
+Os 3 Motores Principais (Requisitos Essenciais)
+
+    Motor de Ideação (NL -> Trello):
+
+        Interface no Angular onde o usuário insere demandas em linguagem natural.
+
+        Backend envia o prompt via API do Gemini com o Context Model de Product Manager.
+
+        O retorno (estritamente JSON) é injetado via POST na API do Trello (/1/cards) na lista "Backlog".
+
+    Observer de Criação (Trello -> GitHub):
+
+        NestJS expõe a rota POST /webhooks/trello-to-github.
+
+        Ao mover um card para "To Do" no Trello, o NestJS recebe o webhook, formata a descrição para Markdown e cria uma Issue via API do GitHub (POST /repos/{owner}/{repo}/issues).
+
+        NestJS atualiza o card do Trello via PUT, inserindo o link da nova Issue.
+
+    Observer de Fechamento (GitHub -> Trello):
+
+        NestJS escuta o evento issues.closed via webhook do GitHub (acionado pelo merge de PRs com Fixes #ID).
+
+        NestJS consulta o Postgres (ou metadados) para achar o card do Trello correspondente e faz um PUT na API do Trello, movendo-o para "Done".

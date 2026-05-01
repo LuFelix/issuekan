@@ -8,6 +8,9 @@
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1); // Sombra suave
   border-radius: 8px;
   overflow: hidden;
+  background-color: var(--bg2);
+  color: var(--text);
+  border: 1px solid var(--border);
 }
 
 .custom-card-header {
@@ -15,8 +18,8 @@
   justify-content: space-between;
   align-items: center;
   padding: 24px;
-  background-color: #fff;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  background-color: var(--bg2);
+  border-bottom: 1px solid var(--border);
 
   .header-actions {
     display: flex;
@@ -31,8 +34,8 @@
   align-items: center;
   padding: 24px;
   flex-wrap: wrap;
-  background-color: #fcfcfc; // Fundo leve para diferenciar
-  border-bottom: 1px solid rgba(0,0,0,0.04);
+  background-color: var(--bg3); // Theme-aware background
+  border-bottom: 1px solid var(--border);
 }
 
 .action-bar .filter-group {
@@ -69,8 +72,8 @@
   display: flex;
   justify-content: flex-end;
   padding: 8px 24px !important;
-  background-color: #fff;
-  border-top: 1px solid rgba(0, 0, 0, 0.08);
+  background-color: var(--bg2);
+  border-top: 1px solid var(--border);
 }
 
 /* Responsividade */
