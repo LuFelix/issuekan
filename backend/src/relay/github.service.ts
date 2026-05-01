@@ -95,13 +95,16 @@ export class GithubService {
     const url = `https://api.github.com/repos/${repoOwner}/${repoName}/issues/${issueNumber}`;
 
     try {
+      const activeBranches = await this.getActiveBranches();
       const response = await axios.get<GithubIssue>(url, {
         headers: {
           Authorization: `Bearer ${this.githubToken}`,
           'Accept': 'application/vnd.github.v3+json',
         },
       });
-      return response.data;
+      const issue = response.data;
+      const hasActiveBranch = activeBranches.some(branch => branch.includes(`/${issue.number}-`));
+      return { ...issue, hasActiveBranch };
     } catch (error: any) {
       this.logger.error(`Erro ao buscar issue ${issueNumber} do GitHub: ${(error as any).response?.data || (error as any).message}`);
       return null;

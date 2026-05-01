@@ -63,11 +63,12 @@ export class DashboardService {
     // Populate Development with GitHub Open Issues
     dashboardData.Development = githubOpenIssues.map(issue => ({
       id: issue.id,
-      type: issue.type as "github", // Assumindo que o tipo é sempre 'github'
+      type: issue.type as "github", // Assumindo que o tipo é sempre \'github\'
       title: issue.title,
       description: issue.description,
       url: issue.url,
       status: issue.status,
+      hasActiveBranch: issue.hasActiveBranch,
     }));
 
     // Process existing RelayLinks (GitHub Issues and Trello Cards linked to issues)
@@ -83,6 +84,7 @@ export class DashboardService {
           url: githubIssue.html_url,
           status: githubIssue.state,
           labels: githubIssue.labels?.map((label: { name: string }) => label.name) || [],
+          hasActiveBranch: githubIssue.hasActiveBranch,
         };
 
         // Distribute based on the new logic
