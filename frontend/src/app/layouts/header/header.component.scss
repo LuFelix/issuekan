@@ -1,7 +1,7 @@
 .main-header {
-  // position: sticky; // Descomente se quiser o header fixo no topo
-  // top: 0;
-  // z-index: 1000;
+  background: var(--bg2);
+  color: var(--text);
+  border-bottom: 1px solid var(--border);
 }
 
 .logo { // Aplica-se à tag <img>
@@ -53,6 +53,12 @@
 
 .notification-button {
   margin-right: 8px;
+}
+
+.theme-toggle-btn {
+  margin-right: 8px;
+  border-color: var(--border) !important;
+  color: var(--text) !important;
 }
 
 .user-menu-button {

@@ -1,5 +1,10 @@
 /* You can add global styles to this file, and also import other style files */
 @use "@angular/material" as mat;
+@use "./styles/themes/standard-scss";
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 :root {
     color-scheme: light;
@@ -19,3 +24,111 @@
 
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+html[data-theme='dark'] body {
+  background-color: var(--bg);
+  color: var(--text);
+}
+
+html[data-theme='dark'] h1,
+html[data-theme='dark'] h2,
+html[data-theme='dark'] h3,
+html[data-theme='dark'] h4,
+html[data-theme='dark'] h5,
+html[data-theme='dark'] h6,
+html[data-theme='dark'] p,
+html[data-theme='dark'] span,
+html[data-theme='dark'] div,
+html[data-theme='dark'] label {
+  color: inherit;
+}
+
+/* Theme-aware Material overrides */
+html[data-theme='dark'] .mat-mdc-card {
+  background-color: var(--bg2);
+  color: var(--text);
+  border: 1px solid var(--border);
+}
+
+html[data-theme='dark'] .mat-mdc-table {
+  background-color: var(--bg2);
+  color: var(--text);
+}
+
+html[data-theme='dark'] .mat-mdc-header-row {
+  background-color: var(--bg3);
+}
+
+html[data-theme='dark'] .mat-mdc-row {
+  background-color: var(--bg2);
+}
+
+html[data-theme='dark'] .mat-mdc-header-cell {
+  background-color: var(--bg3);
+  color: var(--text);
+  border-bottom-color: var(--border);
+}
+
+html[data-theme='dark'] .mat-mdc-cell {
+  color: var(--text);
+  border-bottom-color: var(--border);
+}
+
+html[data-theme='dark'] .mat-mdc-table .mdc-data-table__content,
+html[data-theme='dark'] .mat-mdc-table .mdc-data-table__header-cell,
+html[data-theme='dark'] .mat-mdc-table .mdc-data-table__cell,
+html[data-theme='dark'] .mat-mdc-table .mdc-data-table__cell {
+  color: var(--text);
+  border-bottom-color: var(--border);
+}
+
+html[data-theme='dark'] .mat-mdc-paginator {
+  background-color: var(--bg2);
+  color: var(--text);
+}
+
+/* Theme-aware form fields and native inputs */
+html[data-theme='dark'] .mat-mdc-form-field,
+html[data-theme='dark'] .mat-mdc-form-field .mdc-floating-label,
+html[data-theme='dark'] .mat-mdc-form-field .mat-mdc-form-field-hint,
+html[data-theme='dark'] .mat-mdc-form-field .mat-mdc-input-element,
+html[data-theme='dark'] .mat-mdc-form-field input,
+html[data-theme='dark'] .mat-mdc-form-field textarea,
+html[data-theme='dark'] .mat-mdc-form-field select,
+html[data-theme='dark'] input,
+html[data-theme='dark'] textarea,
+html[data-theme='dark'] select,
+html[data-theme='dark'] select {
+  color: var(--text) !important;
+}
+
+html[data-theme='dark'] .mat-mdc-text-field-wrapper {
+  background-color: var(--bg2) !important;
+}
+
+html[data-theme='dark'] .mat-mdc-form-field .mdc-notched-outline__leading,
+html[data-theme='dark'] .mat-mdc-form-field .mdc-notched-outline__notch,
+html[data-theme='dark'] .mat-mdc-form-field .mdc-notched-outline__trailing,
+html[data-theme='dark'] .mat-mdc-form-field .mdc-notched-outline__trailing {
+  border-color: var(--border) !important;
+}
+
+/* Theme-aware menu overlay (Angular Material in CDK overlay container) */
+html[data-theme='dark'] .cdk-overlay-container .mat-mdc-menu-panel {
+  background-color: var(--bg2);
+  border: 1px solid var(--border);
+}
+
+html[data-theme='dark'] .cdk-overlay-container .mat-mdc-menu-item {
+  color: var(--text);
+}
+
+html[data-theme='dark'] .cdk-overlay-container .mat-mdc-menu-item:hover,
+html[data-theme='dark'] .cdk-overlay-container .mat-mdc-menu-item.cdk-focused,
+html[data-theme='dark'] .cdk-overlay-container .mat-mdc-menu-item.cdk-focused {
+  background-color: var(--bg3);
+}
+
+html[data-theme='dark'] .cdk-overlay-container .mat-mdc-menu-item .mdc-list-item__primary-text {
+  color: var(--text);
+}

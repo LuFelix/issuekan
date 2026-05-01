@@ -1,0 +1,16 @@
+html[data-theme='dark'] {
+  --bg: #0b0f14;
+  --bg2: #111827;
+  --bg3: #1f2937;
+  --bg4: #374151;
+  --border: #2f3a4a;
+  --text: #e5e7eb;
+  --text2: #9ca3af;
+  --primary: #8b5cf6;
+  --primary-2: #7c3aed;
+  --success: #22c55e;
+}
+
+html[data-theme='dark'] {
+  color-scheme: dark;
+}
