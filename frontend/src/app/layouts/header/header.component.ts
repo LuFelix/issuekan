@@ -34,9 +34,27 @@ export class HeaderComponent {
 
   userData: UserData | null = null;
   notificationCount = 5; // Exemplo de contagem de notificações
+  currentTheme: 'dark' | 'light' = 'dark';
 
   ngOnInit() {
     this.userData = this.authService.getUserData();
+    this.initializeTheme();
+  }
+
+  private initializeTheme() {
+    const storedTheme = localStorage.getItem('theme');
+    const theme: 'dark' | 'light' = storedTheme === 'light' ? 'light' : 'dark';
+    this.applyTheme(theme);
+  }
+
+  private applyTheme(theme: 'dark' | 'light') {
+    this.currentTheme = theme;
+    document.documentElement.setAttribute('data-theme', theme);
+    localStorage.setItem('theme', theme);
+  }
+
+  toggleTheme() {
+    this.applyTheme(this.currentTheme === 'dark' ? 'light' : 'dark');
   }
 
   emitToggleSidenav() {

@@ -1,5 +1,10 @@
 /* You can add global styles to this file, and also import other style files */
 @use "@angular/material" as mat;
+@use "./styles/themes/standard-scss";
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 :root {
     color-scheme: light;
@@ -19,3 +24,70 @@
 
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+/* Theme-aware Material overrides */
+html[data-theme='dark'] .mat-mdc-card,
+html[data-theme='light'] .mat-mdc-card {
+  background-color: var(--bg2);
+  color: var(--text);
+  border: 1px solid var(--border);
+}
+
+html[data-theme='dark'] .mat-mdc-table,
+html[data-theme='light'] .mat-mdc-table {
+  background-color: var(--bg2);
+  color: var(--text);
+}
+
+html[data-theme='dark'] .mat-mdc-header-row,
+html[data-theme='light'] .mat-mdc-header-row {
+  background-color: var(--bg3);
+}
+
+html[data-theme='dark'] .mat-mdc-row,
+html[data-theme='light'] .mat-mdc-row {
+  background-color: var(--bg2);
+}
+
+html[data-theme='dark'] .mat-mdc-header-cell,
+html[data-theme='light'] .mat-mdc-header-cell {
+  background-color: var(--bg3);
+  color: var(--text);
+  border-bottom-color: var(--border);
+}
+
+html[data-theme='dark'] .mat-mdc-cell,
+html[data-theme='light'] .mat-mdc-cell {
+  color: var(--text);
+  border-bottom-color: var(--border);
+}
+
+html[data-theme='dark'] .mat-mdc-paginator,
+html[data-theme='light'] .mat-mdc-paginator {
+  background-color: var(--bg2);
+  color: var(--text);
+}
+
+/* Theme-aware menu overlay (Angular Material in CDK overlay container) */
+html[data-theme='dark'] .cdk-overlay-container .mat-mdc-menu-panel,
+html[data-theme='light'] .cdk-overlay-container .mat-mdc-menu-panel {
+  background-color: var(--bg2);
+  border: 1px solid var(--border);
+}
+
+html[data-theme='dark'] .cdk-overlay-container .mat-mdc-menu-item,
+html[data-theme='light'] .cdk-overlay-container .mat-mdc-menu-item {
+  color: var(--text);
+}
+
+html[data-theme='dark'] .cdk-overlay-container .mat-mdc-menu-item:hover,
+html[data-theme='dark'] .cdk-overlay-container .mat-mdc-menu-item.cdk-focused,
+html[data-theme='light'] .cdk-overlay-container .mat-mdc-menu-item:hover,
+html[data-theme='light'] .cdk-overlay-container .mat-mdc-menu-item.cdk-focused {
+  background-color: var(--bg3);
+}
+
+html[data-theme='dark'] .cdk-overlay-container .mat-mdc-menu-item .mdc-list-item__primary-text,
+html[data-theme='light'] .cdk-overlay-container .mat-mdc-menu-item .mdc-list-item__primary-text {
+  color: var(--text);
+}

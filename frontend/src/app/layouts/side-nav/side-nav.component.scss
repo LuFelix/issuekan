@@ -1,15 +1,16 @@
 // Remove padding padrão para controlar melhor
 mat-nav-list {
   padding-top: 0;
+  background: var(--bg2);
 }
 
 // Estilo para o link ativo
 .active-link {
-  background-color: rgba(63, 81, 181, 0.1); // Cor primária com transparência (exemplo)
-  color: #3f51b5; // Cor primária (exemplo)
+  background-color: color-mix(in srgb, var(--primary) 18%, transparent);
+  color: var(--primary);
 
   mat-icon {
-    color: #3f51b5; // Cor primária (exemplo)
+    color: var(--primary);
   }
 }
 
@@ -17,6 +18,7 @@ mat-nav-list {
 a[mat-list-item] {
   margin: 4px 8px;
   border-radius: 4px;
+  color: var(--text2);
   // CORREÇÃO: Troca height por min-height para permitir expansão
   min-height: 44px; // Altura MÍNIMA padrão
   height: auto;     // Altura se ajusta ao conteúdo

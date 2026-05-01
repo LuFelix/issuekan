@@ -18,6 +18,11 @@
                  [matBadgeHidden]="notificationCount === 0">notifications</mat-icon>
     </button>
 
+    <button mat-stroked-button class="theme-toggle-btn" (click)="toggleTheme()" aria-label="Alternar tema">
+      <mat-icon>{{ currentTheme === 'dark' ? 'light_mode' : 'dark_mode' }}</mat-icon>
+      <span>{{ currentTheme === 'dark' ? 'Light' : 'Dark' }}</span>
+    </button>
+
     <!-- Menu do Usuário -->
     <button mat-button [matMenuTriggerFor]="userMenu" class="user-menu-button">
       <!-- Foto/Ícone do Usuário -->
