@@ -8,9 +8,11 @@
          target="_blank" 
          (click)="$event.stopPropagation()"
          [ngClass]="getBadgeClass()" 
-         class="tw-text-[10px] tw-font-bold tw-uppercase tw-tracking-wider tw-px-2 tw-py-1 tw-rounded-full tw-shadow-sm tw-flex tw-items-center tw-gap-1 hover:tw-opacity-80 tw-transition-opacity">
-        {{ cardData.type }}
-        <mat-icon class="tw-text-[12px] tw-w-[12px] tw-h-[12px]">open_in_new</mat-icon>
+         class="tw-inline-flex tw-items-center tw-justify-center tw-gap-1.5 tw-no-underline hover:tw-no-underline tw-px-2.5 tw-py-1 tw-rounded tw-shadow-sm hover:tw-opacity-80 tw-transition-opacity">
+        <span class="tw-text-[10px] tw-font-bold tw-uppercase tw-tracking-wider tw-leading-none tw-mt-[1px]">
+          {{ cardData.type }}
+        </span>
+        <mat-icon class="tw-text-[14px] tw-h-[14px] tw-w-[14px] tw-leading-none tw-flex tw-items-center tw-justify-center">open_in_new</mat-icon>
       </a>
       <mat-icon class="tw-text-slate-400 tw-scale-75">{{ getIcon() }}</mat-icon>
     </div>
@@ -38,7 +40,7 @@
     </div>
   }
 
-  <!-- Footer/Status (Sem ID) -->
+  <!-- Footer/Status (Sem UUID) -->
   @if (cardData.status) {
     <div class="tw-flex tw-items-center tw-justify-between tw-mt-4 tw-pt-3 tw-border-t tw-border-slate-600/50">
       <p class="tw-text-slate-400 tw-text-xs tw-flex tw-items-center tw-gap-1">
