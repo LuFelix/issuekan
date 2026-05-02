@@ -10,9 +10,34 @@ export class GithubWebhookController {
 
   @Public()
   @Post()
-  handleGithubWebhook(@Body() payload: any) {
-    this.logger.log(`GitHub Webhook received: ${JSON.stringify(payload)}`);
-    return { status: 'received', message: 'GitHub webhook processed' };
+  async handleGithubWebhook(@Body() payload: any) {
+    this.logger.log(`GitHub Webhook received. Action: ${payload.action}, Merged: ${payload.pull_request?.merged}, Base Ref: ${payload.pull_request?.base?.ref}`);
+
+    // Lógica de Filtro
+    if (
+      payload.action === 'closed' &&
+      payload.pull_request?.merged === true &&
+      payload.pull_request?.base?.ref === 'develop'
+    ) {
+      const headRef = payload.pull_request.head.ref;
+      this.logger.log(`Pull Request merged into develop: ${headRef}`);
+
+      // Extração da Issue usando Regex
+      const issueNumberMatch = headRef.match(/(\d+)-/);
+      if (issueNumberMatch && issueNumberMatch[1]) {
+        const issueNumber = parseInt(issueNumberMatch[1], 10);
+        this.logger.log(`Issue number extracted: ${issueNumber}`);
+        // Ação Final
+        await this.githubService.addLabelToIssue(issueNumber, 'QA');
+        return { status: 'success', message: `Label 'QA' added to issue #${issueNumber}` };
+      } else {
+        this.logger.warn(`Could not extract issue number from branch name: ${headRef}`);
+      }
+    } else {
+      this.logger.log('Ignoring GitHub webhook: conditions not met for adding QA label.');
+    }
+
+    return { status: 'ignored', message: 'GitHub webhook processed without action' };
   }
 
   @Public()

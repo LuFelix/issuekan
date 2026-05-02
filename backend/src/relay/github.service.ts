@@ -111,7 +111,26 @@ export class GithubService {
     }
   }
 
-  // Mantém o método original getOpenIssues para ser usado no dashboard.service
+  // Novo método para adicionar Label isolado corretamente
+  async addLabelToIssue(issueNumber: number, label: string): Promise<void> {
+    const repoOwner = 'LuFelix';
+    const repoName = 'issuekan';
+    const url = `https://api.github.com/repos/${repoOwner}/${repoName}/issues/${issueNumber}/labels`;
+
+    try {
+      await axios.post(url, { labels: [label] }, {
+        headers: {
+          Authorization: `Bearer ${this.githubToken}`,
+          'Accept': 'application/vnd.github.v3+json',
+        },
+      });
+      this.logger.log(`Label '${label}' adicionada à issue #${issueNumber} no GitHub.`);
+    } catch (error: any) {
+      this.logger.error(`Erro ao adicionar a label '${label}' à issue #${issueNumber}: ${(error as any).response?.data?.message || (error as any).message}`);
+    }
+  }
+
+  // Método original mantido intacto
   async getAllOpenIssuesForDashboard(): Promise<DashboardColumnData[]> {
     const repoOwner = 'LuFelix';
     const repoName = 'issuekan';
@@ -120,7 +139,8 @@ export class GithubService {
     try {
       const activeBranches = await this.getActiveBranches();
 
-      const response = await axios.get<GithubIssue[]>(url, {
+      // Definindo a interseção para que a tipagem suporte a propriedade labels
+      const response = await axios.get<(GithubIssue & { labels: { name: string }[] })[]>(url, {
         headers: {
           Authorization: `Bearer ${this.githubToken}`,
           'Accept': 'application/vnd.github.v3+json',
@@ -129,13 +149,18 @@ export class GithubService {
 
       return response.data.map(issue => {
         const isActive = activeBranches.some(branch => branch.includes(`/${issue.number}-`));
+
+        // Verifica se existe alguma label com o nome 'QA'
+        const hasQALabel = issue.labels.some(label => label.name === 'QA');
+        const status = hasQALabel ? 'QA' : issue.state;
+
         return {
           id: String(issue.number),
           title: issue.title,
           description: issue.body || '',
           url: issue.html_url,
           type: 'github',
-          status: issue.state || undefined,
+          status: status || undefined,
           hasActiveBranch: isActive,
         };
       });
