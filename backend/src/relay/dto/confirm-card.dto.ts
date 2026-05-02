@@ -3,13 +3,13 @@ import { IsString, IsNotEmpty, IsArray } from 'class-validator';
 export class ConfirmCardDto {
   @IsString()
   @IsNotEmpty()
-  title: string;
+  title!: string;
 
   @IsString()
   @IsNotEmpty()
-  userStory: string;
+  userStory!: string;
 
   @IsArray()
   @IsNotEmpty()
-  acceptanceCriteria: string[];
+  acceptanceCriteria!: string[];
 }

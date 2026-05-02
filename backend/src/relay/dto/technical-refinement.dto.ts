@@ -3,13 +3,13 @@ import { IsString, IsNotEmpty } from 'class-validator';
 export class TechnicalRefinementDto {
   @IsString()
   @IsNotEmpty()
-  trelloCardId: string;
+  trelloCardId!: string;
 
   @IsString()
   @IsNotEmpty()
-  title: string;
+  title!: string;
 
   @IsString()
   @IsNotEmpty()
-  description: string;
+  description!: string;
 }

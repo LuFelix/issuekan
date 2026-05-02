@@ -35,7 +35,7 @@ export class DevReviewModalComponent implements OnInit {
   private dialogRef = inject(MatDialogRef<DevReviewModalComponent>);
   private dashboardService = inject(DashboardService);
   
-  @Inject(MAT_DIALOG_DATA) data!: ReviewData;
+  public data = inject<ReviewData>(MAT_DIALOG_DATA);
 
   isLoading: boolean = true;
   error: string | null = null;
