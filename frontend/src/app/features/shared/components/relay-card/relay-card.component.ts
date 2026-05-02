@@ -17,6 +17,7 @@ export class RelayCardComponent {
 
   @Input() cardData!: DashboardColumnData;
   @Output() transformToIssue = new EventEmitter<string>();
+  @Output() relayClick = new EventEmitter<DashboardColumnData>();
 
   openDetails(): void {
     this.dialog.open(RelayCardDetailsComponent, {
@@ -46,5 +47,9 @@ export class RelayCardComponent {
 
   emitTransformToIssue(): void {
     this.transformToIssue.emit(this.cardData.id);
+  }
+
+  emitRelayClick(): void {
+    this.relayClick.emit(this.cardData);
   }
 }

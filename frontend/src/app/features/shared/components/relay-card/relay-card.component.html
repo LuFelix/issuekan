@@ -19,12 +19,20 @@
     </div>
     
     @if (shouldShowTransformButton()) {
-      <button (click)="emitTransformToIssue(); $event.stopPropagation()" 
-              title="Transformar em Issue"
-              class="tw-flex tw-items-center tw-gap-1 tw-text-slate-400 hover:tw-text-blue-400 tw-transition-colors tw-duration-200">
-        <mat-icon class="tw-scale-90">rocket_launch</mat-icon>
-        <span class="tw-text-xs tw-font-medium">Relay</span>
-      </button>
+      <div class="tw-flex tw-items-center tw-gap-2">
+        <button (click)="emitRelayClick(); $event.stopPropagation()" 
+                title="Obter Refinamento Técnico"
+                class="tw-flex tw-items-center tw-gap-1 tw-text-slate-400 hover:tw-text-amber-400 tw-transition-colors tw-duration-200">
+          <mat-icon class="tw-scale-90">build</mat-icon>
+          <span class="tw-text-xs tw-font-medium">RELAY</span>
+        </button>
+        <button (click)="emitTransformToIssue(); $event.stopPropagation()" 
+                title="Transformar em Issue"
+                class="tw-flex tw-items-center tw-gap-1 tw-text-slate-400 hover:tw-text-blue-400 tw-transition-colors tw-duration-200">
+          <mat-icon class="tw-scale-90">rocket_launch</mat-icon>
+          <span class="tw-text-xs tw-font-medium">Relay</span>
+        </button>
+      </div>
     }
   </div>
 

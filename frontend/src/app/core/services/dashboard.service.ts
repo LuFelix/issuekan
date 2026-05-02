@@ -67,5 +67,18 @@ export class DashboardService {
       })
     );
   }
+
+  /**
+   * Obtém refinamento técnico de um card do Trello
+   * @param technicalData - Dados do card (trelloCardId, title, description)
+   * @returns Observable com refinamento técnico (techTitle, techDescription, tasks)
+   */
+  getTechnicalRefinement(technicalData: any): Observable<any> {
+    return this.http.post(`${this.relayApiUrl}/technical-refinement`, technicalData).pipe(
+      tap(response => {
+        console.log('✅ [Relay] Refinamento técnico recebido:', response);
+      })
+    );
+  }
 }
 

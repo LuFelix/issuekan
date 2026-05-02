@@ -2,6 +2,7 @@ import { Controller, Post, Body } from '@nestjs/common';
 import { RelayService, RefineStoryResponse } from './relay.service';
 import { RefineStoryDto } from './dto/refine-story.dto';
 import { ConfirmCardDto } from './dto/confirm-card.dto';
+import { TechnicalRefinementDto } from './dto/technical-refinement.dto';
 
 @Controller('relay')
 export class RelayController {
@@ -19,5 +20,10 @@ export class RelayController {
       confirmCardDto.userStory,
       confirmCardDto.acceptanceCriteria
     );
+  }
+
+  @Post('technical-refinement')
+  async getTechnicalRefinement(@Body() technicalRefinementDto: TechnicalRefinementDto): Promise<any> {
+    return this.relayService.getTechnicalRefinement(technicalRefinementDto);
   }
 }

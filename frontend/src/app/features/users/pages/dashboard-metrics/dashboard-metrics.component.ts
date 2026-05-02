@@ -144,4 +144,34 @@ export class DashboardMetricsComponent implements OnInit {
       }
     });
   }
+
+  /**
+   * Processa o clique no botão RELAY de um card
+   * @param cardData - Dados do card que foi clicado
+   */
+  onRelayClick(cardData: DashboardColumnData): void {
+    console.log('🔧 [RELAY] Iniciando refinamento técnico para:', cardData);
+
+    // Enviar dados para o backend
+    this.dashboardService.getTechnicalRefinement({
+      trelloCardId: cardData.id,
+      title: cardData.title,
+      description: cardData.description || ''
+    }).subscribe({
+      next: (response) => {
+        if (response.status === 'success') {
+          console.log('✅ [RELAY] Refinamento técnico recebido:', response.data);
+        } else {
+          console.error('❌ [RELAY] Erro na resposta:', response.error);
+        }
+      },
+      error: (error) => {
+        console.error('❌ [RELAY] Erro ao obter refinamento técnico:', {
+          message: error?.error?.error || error?.message || 'Erro desconhecido',
+          status: error?.status,
+          details: error
+        });
+      }
+    });
+  }
 }

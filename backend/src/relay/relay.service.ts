@@ -165,4 +165,94 @@ Requisitos:
       };
     }
   }
+
+  /**
+   * Obtém refinamento técnico de um card usando Gemini
+   * @param dto - Dados do card (trelloCardId, title, description)
+   * @returns Objeto com refinamento técnico (techTitle, techDescription, tasks)
+   */
+  async getTechnicalRefinement(dto: any): Promise<any> {
+    try {
+      this.logger.log(`Getting technical refinement for card: "${dto.title}"`);
+
+      if (!this.model) {
+        return {
+          status: 'error',
+          error: 'Gemini model not initialized. GEMINI_API_KEY is missing.'
+        };
+      }
+
+      // Prompt de sistema para agir como Arquiteto de Software Sênior
+      const systemPrompt = `Você é um Arquiteto de Software Sênior com 15+ anos de experiência em arquitetura de sistemas.
+
+Sua tarefa é analisar uma história de negócio (título e descrição) e traduzir para especificações técnicas detalhadas.
+
+Analise o contexto de negócio e retorne ESTRITAMENTE um JSON válido com a seguinte estrutura:
+{
+  "techTitle": "Sugestão de título técnico que represente a implementação",
+  "techDescription": "Descrição técnica detalhada com: requisitos não funcionais, padrões de arquitetura a usar, considerações de performance, segurança, escalabilidade e confiabilidade. Seja específico e técnico.",
+  "tasks": [
+    "Tarefa técnica 1 - implementação específica",
+    "Tarefa técnica 2 - integração necessária",
+    "Tarefa técnica 3 - testes e validações"
+  ]
+}
+
+Requisitos:
+- O JSON deve ser válido e sem aspas escapadas incorretamente
+- As tasks devem ser acionáveis e técnicas
+- Considere banco de dados, cache, APIs, segurança
+- Retorne APENAS o JSON, sem explicações adicionais`;
+
+      const response = await this.model.generateContent({
+        contents: [
+          {
+            parts: [
+              {
+                text: systemPrompt
+              },
+              {
+                text: `Analise a seguinte história de negócio e forneça o refinamento técnico:\n\nTítulo: ${dto.title}\n\nDescrição: ${dto.description}`
+              }
+            ]
+          }
+        ]
+      });
+
+      const responseText = response.response.text();
+      this.logger.debug(`Gemini technical response: ${responseText}`);
+
+      // Limpar markdown
+      let cleanedResponse = responseText
+        .replace(/```json\n?/g, '')
+        .replace(/```\n?/g, '')
+        .trim();
+
+      // Parse JSON
+      const technicalRefinement = JSON.parse(cleanedResponse);
+
+      // Validar estrutura
+      if (!technicalRefinement.techTitle || !technicalRefinement.techDescription || !Array.isArray(technicalRefinement.tasks)) {
+        return {
+          status: 'error',
+          error: 'Invalid response structure from Gemini'
+        };
+      }
+
+      this.logger.log(`Technical refinement generated: ${technicalRefinement.techTitle}`);
+
+      return {
+        status: 'success',
+        data: technicalRefinement
+      };
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      this.logger.error(`Error getting technical refinement: ${errorMessage}`, error instanceof Error ? error.stack : '');
+
+      return {
+        status: 'error',
+        error: `Failed to get technical refinement: ${errorMessage}`
+      };
+    }
+  }
 }
