@@ -29,6 +29,7 @@ export interface DashboardData {
 })
 export class DashboardService {
   private apiUrl = environment.apiUrl + '/relay/dashboard';
+  private relayApiUrl = environment.apiUrl + '/relay';
 
   constructor(private http: HttpClient) { }
 
@@ -40,9 +41,31 @@ export class DashboardService {
       })
     );
   }
-  // Adicione este método ao seu DashboardService
+
+  /**
+   * Cria um novo card no Backlog refinando o texto em linguagem natural
+   * @param text - Descrição da tarefa em linguagem natural
+   * @returns Observable com os dados refinados da história
+   */
   createBacklogCard(text: string): Observable<any> {
-    // Rota que será processada pelo NestJS
-    return this.http.post(`${this.apiUrl}/relay/refine-story`, { text });
+    return this.http.post(`${this.relayApiUrl}/refine-story`, { text }).pipe(
+      tap(response => {
+        console.log('✅ [Relay] Card refinado com sucesso:', response);
+      })
+    );
+  }
+
+  /**
+   * Confirma um card refinado e o envia para o Trello
+   * @param refinedStory - Dados da história refinada (title, userStory, acceptanceCriteria)
+   * @returns Observable com resposta do servidor
+   */
+  confirmBacklogCard(refinedStory: any): Observable<any> {
+    return this.http.post(`${this.relayApiUrl}/confirm-card`, refinedStory).pipe(
+      tap(response => {
+        console.log('✅ [Relay] Card confirmado e enviado para Trello:', response);
+      })
+    );
   }
 }
+

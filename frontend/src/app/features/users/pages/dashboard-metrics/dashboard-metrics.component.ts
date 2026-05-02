@@ -130,11 +130,14 @@ export class DashboardMetricsComponent implements OnInit {
     this.dialog.open(NaturalInputModalComponent, {
       width: '500px',
       panelClass: 'custom-dialog-container',
-      disableClose: false
-    }).afterClosed().subscribe((text) => {
-      if (text) {
-        console.log('Texto capturado:', text);
-        // TODO: Integrar com o backend para criar o card
+      disableClose: true
+    }).afterClosed().subscribe((result) => {
+      // Se a modal retornar sucesso, recarregar o dashboard
+      if (result && result.success) {
+        console.log('✅ [Dashboard] Card aprovado e enviado. Recarregando dashboard...');
+        this.loadDashboardData();
+      } else {
+        console.log('❌ [Dashboard] Modal fechada sem enviar card');
       }
     });
   }
