@@ -130,26 +130,14 @@ export class DashboardMetricsComponent implements OnInit {
     this.dialog.open(NaturalInputModalComponent, {
       width: '500px',
       panelClass: 'custom-dialog-container',
-      disableClose: false
-    }).afterClosed().subscribe((text) => {
-      if (text) {
-        console.log('📝 [NaturalInput] Texto capturado:', text);
-        
-        // Chamar o serviço para refinar a história
-        this.dashboardService.createBacklogCard(text).subscribe({
-          next: (response) => {
-            console.log('✅ [NaturalInput] História refinada com sucesso:', response);
-            // Recarregar os dados do dashboard para atualizar o Kanban
-            this.loadDashboardData();
-          },
-          error: (error) => {
-            console.error('❌ [NaturalInput] Erro ao refinar história:', {
-              message: error?.error?.error || error?.message || 'Erro desconhecido',
-              status: error?.status,
-              details: error
-            });
-          }
-        });
+      disableClose: true
+    }).afterClosed().subscribe((result) => {
+      // Se a modal retornar sucesso, recarregar o dashboard
+      if (result && result.success) {
+        console.log('✅ [Dashboard] Card aprovado e enviado. Recarregando dashboard...');
+        this.loadDashboardData();
+      } else {
+        console.log('❌ [Dashboard] Modal fechada sem enviar card');
       }
     });
   }

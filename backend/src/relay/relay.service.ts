@@ -1,5 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { GoogleGenerativeAI } from '@google/generative-ai';
+import { TrelloService } from './trello.service';
 
 interface RefinedStory {
   title: string;
@@ -19,7 +20,7 @@ export class RelayService {
   private genAI!: GoogleGenerativeAI;
   private model: any;
 
-  constructor() {
+  constructor(private trelloService: TrelloService) {
     this.logger.log("RelayService initialized");
     
     // Inicializar Gemini com API Key
@@ -117,6 +118,50 @@ Requisitos:
       return {
         status: 'error',
         error: `Failed to refine story: ${errorMessage}`
+      };
+    }
+  }
+
+  /**
+   * Confirma um card refinado e o envia para o Trello
+   * @param title - Título da história
+   * @param userStory - User story completa
+   * @param acceptanceCriteria - Array de critérios de aceitação
+   * @returns Resposta do Trello com dados do card criado
+   */
+  async confirmCard(
+    title: string,
+    userStory: string,
+    acceptanceCriteria: string[]
+  ): Promise<any> {
+    try {
+      this.logger.log(`Confirming card: "${title}"`);
+
+      // Formatar a descrição com todos os dados
+      const criteria = acceptanceCriteria
+        .map((criteria, index) => `${index + 1}. ${criteria}`)
+        .join('\n');
+
+      const description = `**User Story:**\n${userStory}\n\n**Critérios de Aceitação:**\n${criteria}`;
+
+      // Criar o card no Trello (sem listar específica, usa a primeira lista que é o Backlog)
+      const trelloCard = await this.trelloService.createCard(title, description);
+
+      this.logger.log(`Card created in Trello: ${trelloCard.id}`);
+
+      return {
+        status: 'success',
+        message: 'Card created and sent to Trello',
+        trelloCardId: trelloCard.id,
+        trelloCardUrl: trelloCard.url
+      };
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      this.logger.error(`Error confirming card: ${errorMessage}`, error instanceof Error ? error.stack : '');
+
+      return {
+        status: 'error',
+        error: `Failed to confirm card: ${errorMessage}`
       };
     }
   }

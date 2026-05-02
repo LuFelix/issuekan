@@ -54,4 +54,18 @@ export class DashboardService {
       })
     );
   }
+
+  /**
+   * Confirma um card refinado e o envia para o Trello
+   * @param refinedStory - Dados da história refinada (title, userStory, acceptanceCriteria)
+   * @returns Observable com resposta do servidor
+   */
+  confirmBacklogCard(refinedStory: any): Observable<any> {
+    return this.http.post(`${this.relayApiUrl}/confirm-card`, refinedStory).pipe(
+      tap(response => {
+        console.log('✅ [Relay] Card confirmado e enviado para Trello:', response);
+      })
+    );
+  }
 }
+
