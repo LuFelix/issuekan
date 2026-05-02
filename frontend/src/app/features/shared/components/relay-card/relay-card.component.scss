@@ -1,3 +1,45 @@
+// ==========================================
+// 1. ESTILIZAÇÃO DO CARD COM BRANCH ATIVA
+// ==========================================
+
+// Alvo exato do card ativo (Tailwind compilado)
+.tw-border-blue-500.tw-bg-slate-800 {
+  background-color: #0b1120 !important; // Fundo azul-escuro profundo (ótimo contraste com gray-800)
+  border-color: #00f0ff !important;     // Borda ciano fosforescente/neon
+  border-width: 1px !important;
+  box-shadow: 0 0 12px rgba(0, 240, 255, 0.25) !important; // Brilho neon sutil em repouso
+  transition: all 0.3s ease-in-out !important;
+
+  // Efeito de super sombra e brilho ao passar o mouse (sem barra de rolagem lateral)
+  &:hover {
+    border-color: #00f0ff !important;
+    box-shadow: 0 0 25px rgba(0, 240, 255, 0.6), 
+                0 0 10px rgba(0, 240, 255, 0.3) !important;
+    background-color: #0d1527 !important;
+  }
+
+  // Target exato da Badge "Em Branch" para torná-la Laranja Vivo
+  .tw-text-blue-400.tw-bg-blue-500\/10,
+  div[class*="tw-text-blue-400"][class*="tw-bg-blue-500"] {
+    color: #ff5500 !important;                    // Texto laranja vivo
+    background-color: rgba(255, 85, 0, 0.12) !important; // Fundo levemente laranja
+    border-color: rgba(255, 85, 0, 0.4) !important;      // Borda laranja suave
+    
+    mat-icon {
+      color: #ff5500 !important;
+    }
+
+    span {
+      color: #ff5500 !important;
+      font-weight: 800 !important;
+    }
+  }
+}
+
+// ==========================================
+// 2. ESTILO ORIGINAL E DESCRIÇÃO
+// ==========================================
+
 .description-content {
   ::ng-deep {
     ul, ol {
