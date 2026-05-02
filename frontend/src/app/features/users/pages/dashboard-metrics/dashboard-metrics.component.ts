@@ -1,18 +1,21 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
+import { MatDialogModule, MatDialog } from '@angular/material/dialog';
 import { CommonModule } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
 import { DashboardService, DashboardData, DashboardColumnData } from '../../../../core/services/dashboard.service';
 import { RelayCardComponent } from '../../../../features/shared/components/relay-card/relay-card.component';
+import { NaturalInputModalComponent } from '../../../../features/shared/components/natural-input-modal/natural-input-modal.component';
 
 @Component({
   selector: 'app-dashboard-metrics',
   standalone: true,
-  imports: [CommonModule, MatCardModule, HttpClientModule, RelayCardComponent],
+  imports: [CommonModule, MatCardModule, MatDialogModule, HttpClientModule, RelayCardComponent, NaturalInputModalComponent],
   templateUrl: './dashboard-metrics.component.html',
   styleUrl: './dashboard-metrics.component.scss'
 })
 export class DashboardMetricsComponent implements OnInit {
+  private dialog = inject(MatDialog);
   dashboardData: DashboardData | null = null;
 
   constructor(private dashboardService: DashboardService) {}
@@ -118,5 +121,24 @@ export class DashboardMetricsComponent implements OnInit {
 
   onTransformToIssue(cardId: string) {
     console.log('Transformar card:', cardId);
+  }
+
+  /**
+   * Abre a modal para inserção de novo card em linguagem natural
+   */
+  openNaturalInputModal(): void {
+    this.dialog.open(NaturalInputModalComponent, {
+      width: '500px',
+      panelClass: 'custom-dialog-container',
+      disableClose: true
+    }).afterClosed().subscribe((result) => {
+      // Se a modal retornar sucesso, recarregar o dashboard
+      if (result && result.success) {
+        console.log('✅ [Dashboard] Card aprovado e enviado. Recarregando dashboard...');
+        this.loadDashboardData();
+      } else {
+        console.log('❌ [Dashboard] Modal fechada sem enviar card');
+      }
+    });
   }
 }

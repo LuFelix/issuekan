@@ -6,6 +6,7 @@ import { RelayLog } from './entities/relay-log.entity';
 import { TrelloWebhookController } from './trello-webhook.controller';
 import { GithubWebhookController } from './github-webhook.controller';
 import { IdeationController } from './ideation.controller';
+import { RelayController } from './relay.controller';
 import { RelayService } from './relay.service';
 import { TrelloService } from './trello.service';
 import { GithubService } from './github.service';
@@ -37,6 +38,7 @@ import { DashboardService } from './dashboard.service';
     TrelloWebhookController,
     GithubWebhookController,
     IdeationController,
+    RelayController,
     DashboardController,
   ],
   exports: [
