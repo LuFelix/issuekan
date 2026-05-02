@@ -6,11 +6,12 @@ import { HttpClientModule } from '@angular/common/http';
 import { DashboardService, DashboardData, DashboardColumnData } from '../../../../core/services/dashboard.service';
 import { RelayCardComponent } from '../../../../features/shared/components/relay-card/relay-card.component';
 import { NaturalInputModalComponent } from '../../../../features/shared/components/natural-input-modal/natural-input-modal.component';
+import { DevReviewModalComponent } from '../../../../features/shared/components/dev-review-modal/dev-review-modal.component';
 
 @Component({
   selector: 'app-dashboard-metrics',
   standalone: true,
-  imports: [CommonModule, MatCardModule, MatDialogModule, HttpClientModule, RelayCardComponent, NaturalInputModalComponent],
+  imports: [CommonModule, MatCardModule, MatDialogModule, HttpClientModule, RelayCardComponent, NaturalInputModalComponent, DevReviewModalComponent],
   templateUrl: './dashboard-metrics.component.html',
   styleUrl: './dashboard-metrics.component.scss'
 })
@@ -152,25 +153,22 @@ export class DashboardMetricsComponent implements OnInit {
   onRelayClick(cardData: DashboardColumnData): void {
     console.log('🔧 [RELAY] Iniciando refinamento técnico para:', cardData);
 
-    // Enviar dados para o backend
-    this.dashboardService.getTechnicalRefinement({
-      trelloCardId: cardData.id,
-      title: cardData.title,
-      description: cardData.description || ''
-    }).subscribe({
-      next: (response) => {
-        if (response.status === 'success') {
-          console.log('✅ [RELAY] Refinamento técnico recebido:', response.data);
-        } else {
-          console.error('❌ [RELAY] Erro na resposta:', response.error);
-        }
-      },
-      error: (error) => {
-        console.error('❌ [RELAY] Erro ao obter refinamento técnico:', {
-          message: error?.error?.error || error?.message || 'Erro desconhecido',
-          status: error?.status,
-          details: error
-        });
+    // Abrir modal de revisão técnica
+    this.dialog.open(DevReviewModalComponent, {
+      width: '700px',
+      panelClass: 'custom-dialog-container',
+      disableClose: true,
+      data: {
+        trelloCardId: cardData.id,
+        title: cardData.title,
+        description: cardData.description || ''
+      }
+    }).afterClosed().subscribe((result) => {
+      if (result) {
+        console.log('✅ Especificação Aprovada pelo Dev:', result);
+        // TODO: Integrar com próximas etapas (salvar em BD, criar issue no GitHub, etc)
+      } else {
+        console.log('❌ [RELAY] Modal fechada sem aprovação');
       }
     });
   }

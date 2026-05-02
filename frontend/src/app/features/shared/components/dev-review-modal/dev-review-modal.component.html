@@ -1,0 +1,107 @@
+<div class="tw-bg-slate-800 tw-rounded-lg tw-overflow-hidden tw-shadow-xl tw-max-h-[90vh] tw-flex tw-flex-col">
+  <!-- LOADING STATE -->
+  <ng-container *ngIf="isLoading">
+    <div class="tw-border-b tw-border-slate-700/50 tw-px-6 tw-py-4">
+      <h2 class="tw-text-xl tw-font-bold tw-text-white">Gerando Especificação Técnica</h2>
+      <p class="tw-text-sm tw-text-slate-400 tw-mt-1">Aguarde enquanto a IA processa...</p>
+    </div>
+
+    <div class="tw-px-6 tw-py-12 tw-flex-1 tw-flex tw-flex-col tw-items-center tw-justify-center">
+      <mat-spinner diameter="50" [strokeWidth]="3"></mat-spinner>
+      <p class="tw-text-slate-400 tw-mt-4">Gerando especificação técnica com IA...</p>
+    </div>
+  </ng-container>
+
+  <!-- ERROR STATE -->
+  <ng-container *ngIf="!isLoading && error">
+    <div class="tw-border-b tw-border-slate-700/50 tw-px-6 tw-py-4">
+      <h2 class="tw-text-xl tw-font-bold tw-text-white">Erro ao Processar</h2>
+    </div>
+
+    <div class="tw-px-6 tw-py-8 tw-flex-1 tw-flex tw-flex-col tw-items-center tw-justify-center">
+      <p class="tw-text-red-400 tw-text-center">{{ error }}</p>
+    </div>
+
+    <div class="tw-border-t tw-border-slate-700/50 tw-px-6 tw-py-4 tw-flex tw-gap-3 tw-justify-end tw-bg-slate-900/50">
+      <button
+        (click)="onCancel()"
+        class="tw-px-4 tw-py-2 tw-rounded tw-bg-slate-700/50 tw-text-white tw-border tw-border-slate-600/50 hover:tw-bg-slate-700/70 tw-transition-colors tw-font-medium">
+        Fechar
+      </button>
+    </div>
+  </ng-container>
+
+  <!-- REVIEW STATE -->
+  <ng-container *ngIf="!isLoading && !error && reviewData">
+    <!-- Header -->
+    <div class="tw-border-b tw-border-slate-700/50 tw-px-6 tw-py-4">
+      <h2 class="tw-text-xl tw-font-bold tw-text-white">Revisar Especificação Técnica</h2>
+      <p class="tw-text-sm tw-text-slate-400 tw-mt-1">Edite se necessário e aprove</p>
+    </div>
+
+    <!-- Content -->
+    <div class="tw-px-6 tw-py-4 tw-flex-1 tw-overflow-y-auto tw-space-y-4">
+      <!-- Tech Title -->
+      <div>
+        <label class="tw-block tw-text-sm tw-font-medium tw-text-slate-300 tw-mb-2">Título Técnico</label>
+        <input
+          [(ngModel)]="reviewData.techTitle"
+          type="text"
+          class="tw-w-full tw-bg-slate-900 tw-text-white tw-border tw-border-slate-600/50 tw-rounded tw-p-2 tw-text-sm focus:tw-border-amber-500/50 focus:tw-outline-none focus:tw-ring-1 focus:tw-ring-amber-500/30">
+      </div>
+
+      <!-- Tech Description -->
+      <div>
+        <label class="tw-block tw-text-sm tw-font-medium tw-text-slate-300 tw-mb-2">Descrição Técnica</label>
+        <textarea
+          [(ngModel)]="reviewData.techDescription"
+          rows="6"
+          class="tw-w-full tw-bg-slate-900 tw-text-white tw-border tw-border-slate-600/50 tw-rounded tw-p-2 tw-text-sm tw-resize-none focus:tw-border-amber-500/50 focus:tw-outline-none focus:tw-ring-1 focus:tw-ring-amber-500/30">
+        </textarea>
+      </div>
+
+      <!-- Tasks -->
+      <div>
+        <div class="tw-flex tw-items-center tw-justify-between tw-mb-2">
+          <label class="tw-block tw-text-sm tw-font-medium tw-text-slate-300">Tarefas Técnicas</label>
+          <button
+            (click)="addTask()"
+            type="button"
+            class="tw-px-2 tw-py-1 tw-rounded tw-bg-amber-500/20 tw-text-amber-300 tw-border tw-border-amber-500/30 hover:tw-bg-amber-500/40 tw-transition-colors tw-text-xs tw-font-medium">
+            + Adicionar
+          </button>
+        </div>
+
+        <div class="tw-space-y-2">
+          <div *ngFor="let task of reviewData.tasks; let i = index" class="tw-flex tw-gap-2">
+            <input
+              [(ngModel)]="reviewData.tasks[i]"
+              type="text"
+              class="tw-flex-1 tw-bg-slate-900 tw-text-white tw-border tw-border-slate-600/50 tw-rounded tw-p-2 tw-text-sm focus:tw-border-amber-500/50 focus:tw-outline-none focus:tw-ring-1 focus:tw-ring-amber-500/30"
+              placeholder="Tarefa técnica">
+            <button
+              (click)="removeTask(i)"
+              type="button"
+              class="tw-px-2 tw-py-1 tw-rounded tw-bg-red-500/20 tw-text-red-300 tw-border tw-border-red-500/30 hover:tw-bg-red-500/40 tw-transition-colors tw-text-sm">
+              ✕
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="tw-border-t tw-border-slate-700/50 tw-px-6 tw-py-4 tw-flex tw-gap-3 tw-justify-end tw-bg-slate-900/50">
+      <button
+        (click)="onCancel()"
+        class="tw-px-4 tw-py-2 tw-rounded tw-bg-slate-700/50 tw-text-white tw-border tw-border-slate-600/50 hover:tw-bg-slate-700/70 tw-transition-colors tw-font-medium">
+        Cancelar
+      </button>
+      <button
+        (click)="onApproveSpecification()"
+        class="tw-px-4 tw-py-2 tw-rounded tw-bg-green-500/20 tw-text-green-300 tw-border tw-border-green-500/30 hover:tw-bg-green-500/40 hover:tw-border-green-500/50 tw-transition-colors tw-font-medium">
+        ✓ Aprovar Especificação
+      </button>
+    </div>
+  </ng-container>
+</div>
