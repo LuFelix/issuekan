@@ -101,13 +101,16 @@ export class DashboardMetricsComponent implements OnInit {
   getQaGithubIssues(): DashboardColumnData[] {
     if (!this.dashboardData) return [];
 
-    const explicitlyInQa = this.dashboardData.QA?.filter(card => card.type === 'github') || [];
+    //const explicitlyInQa = this.dashboardData.QA?.filter(card => card.type === 'github') || [];
 
     const movedToQa = [
       ...(this.dashboardData.Backlog || []),
       ...(this.dashboardData.Definition || []),
-      ...(this.dashboardData.Development || [])
+      ...(this.dashboardData.Development || []),
+      ...(this.dashboardData.Done || [])
     ].filter(card => this.isQaIssue(card));
+
+    const explicitlyInQa = this.dashboardData.QA?.filter(card => card.type === 'github') || [];
 
     const allQa = [...explicitlyInQa, ...movedToQa];
     return allQa.filter((card, index, self) => 
