@@ -1,6 +1,13 @@
 <div class="tw-grid tw-grid-cols-1 md:tw-grid-cols-2 lg:tw-grid-cols-4 tw-gap-4 tw-p-4 tw-min-h-screen tw-bg-gray-900 tw-text-white" *ngIf="dashboardData">
   <div class="tw-bg-gray-800 tw-rounded-lg tw-shadow-md tw-p-4 tw-flex tw-flex-col">
-    <h2 class="tw-text-lg tw-font-bold tw-mb-4 tw-sticky tw-top-0 tw-bg-gray-800 tw-z-10">Backlog (Trello)</h2>
+    <div class="tw-flex tw-items-center tw-justify-between tw-mb-4 tw-sticky tw-top-0 tw-bg-gray-800 tw-z-10">
+      <h2 class="tw-text-lg tw-font-bold">Backlog (Trello)</h2>
+      <button
+        (click)="openNaturalInputModal()"
+        class="tw-ml-2 tw-px-3 tw-py-1 tw-text-sm tw-rounded tw-bg-blue-500/20 tw-text-blue-300 tw-border tw-border-blue-500/30 hover:tw-bg-blue-500/40 hover:tw-border-blue-500/50 tw-transition-colors tw-font-medium">
+        + Inserir
+      </button>
+    </div>
     <div class="tw-flex-grow tw-overflow-y-auto">
       <app-relay-card *ngFor="let card of getBacklogTrelloCards()"
         [cardData]="card"

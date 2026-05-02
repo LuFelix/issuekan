@@ -1,0 +1,37 @@
+<div class="tw-bg-slate-800 tw-rounded-lg tw-overflow-hidden tw-shadow-xl">
+  <!-- Header -->
+  <div class="tw-border-b tw-border-slate-700/50 tw-px-6 tw-py-4">
+    <h2 class="tw-text-xl tw-font-bold tw-text-white">Novo Card em Linguagem Natural</h2>
+    <p class="tw-text-sm tw-text-slate-400 tw-mt-1">Descreva a tarefa de forma simples e clara</p>
+  </div>
+
+  <!-- Content -->
+  <div class="tw-px-6 tw-py-4">
+    <textarea
+      [(ngModel)]="inputText"
+      rows="6"
+      placeholder="Ex: Criar um botão de login na página inicial com validação de email e senha..."
+      class="tw-w-full tw-bg-slate-900 tw-text-white tw-border tw-border-slate-600/50 tw-rounded tw-p-3 tw-focus:border-blue-500/50 focus:tw-outline-none focus:tw-ring-1 focus:tw-ring-blue-500/30 tw-resize-none tw-placeholder-slate-500">
+    </textarea>
+  </div>
+
+  <!-- Footer -->
+  <div class="tw-border-t tw-border-slate-700/50 tw-px-6 tw-py-4 tw-flex tw-gap-3 tw-justify-end tw-bg-slate-900/50">
+   
+    <button
+      (click)="onGenerateCard()"
+      [disabled]="!isGenerateButtonEnabled()"
+      [class.tw-opacity-50]="!isGenerateButtonEnabled()"
+      [class.tw-cursor-not-allowed]="!isGenerateButtonEnabled()"
+      class="tw-px-4 tw-py-2 tw-rounded tw-bg-blue-500/20 tw-text-blue-300 tw-border tw-border-blue-500/30 hover:tw-bg-blue-500/40 hover:tw-border-blue-500/50 tw-transition-colors tw-font-medium disabled:tw-hover:bg-blue-500/20 disabled:tw-hover:border-blue-500/30">
+      Gerar Card
+    </button>
+
+     <button
+      (click)="onCancel()"
+      class="tw-px-4 tw-py-2 tw-rounded tw-bg-slate-700/50 tw-text-white tw-border tw-border-slate-600/50 hover:tw-bg-slate-700/70 tw-transition-colors tw-font-medium">
+      Cancelar
+    </button>
+ 
+  </div>
+</div>

@@ -40,4 +40,9 @@ export class DashboardService {
       })
     );
   }
+  // Adicione este método ao seu DashboardService
+  createBacklogCard(text: string): Observable<any> {
+    // Rota que será processada pelo NestJS
+    return this.http.post(`${this.apiUrl}/relay/refine-story`, { text });
+  }
 }
