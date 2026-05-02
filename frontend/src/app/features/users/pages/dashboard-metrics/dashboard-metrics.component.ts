@@ -133,8 +133,23 @@ export class DashboardMetricsComponent implements OnInit {
       disableClose: false
     }).afterClosed().subscribe((text) => {
       if (text) {
-        console.log('Texto capturado:', text);
-        // TODO: Integrar com o backend para criar o card
+        console.log('📝 [NaturalInput] Texto capturado:', text);
+        
+        // Chamar o serviço para refinar a história
+        this.dashboardService.createBacklogCard(text).subscribe({
+          next: (response) => {
+            console.log('✅ [NaturalInput] História refinada com sucesso:', response);
+            // Recarregar os dados do dashboard para atualizar o Kanban
+            this.loadDashboardData();
+          },
+          error: (error) => {
+            console.error('❌ [NaturalInput] Erro ao refinar história:', {
+              message: error?.error?.error || error?.message || 'Erro desconhecido',
+              status: error?.status,
+              details: error
+            });
+          }
+        });
       }
     });
   }

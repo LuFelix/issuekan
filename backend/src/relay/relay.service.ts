@@ -7,7 +7,7 @@ interface RefinedStory {
   acceptanceCriteria: string[];
 }
 
-interface RefineStoryResponse {
+export interface RefineStoryResponse {
   status: string;
   data?: RefinedStory;
   error?: string;
@@ -16,7 +16,7 @@ interface RefineStoryResponse {
 @Injectable()
 export class RelayService {
   private readonly logger = new Logger(RelayService.name);
-  private genAI: GoogleGenerativeAI;
+  private genAI!: GoogleGenerativeAI;
   private model: any;
 
   constructor() {
@@ -28,7 +28,7 @@ export class RelayService {
       this.logger.warn('GEMINI_API_KEY not found in environment variables');
     } else {
       this.genAI = new GoogleGenerativeAI(apiKey);
-      this.model = this.genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+      this.model = this.genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
     }
   }
 
