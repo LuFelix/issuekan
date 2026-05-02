@@ -33,48 +33,87 @@ export class DashboardMetricsComponent implements OnInit {
     });
   }
 
+  /**
+   * Validador único de QA para garantir exclusão mútua perfeita
+   */
+  private isQaIssue(card: DashboardColumnData): boolean {
+    if (!card || card.type !== 'github') return false;
+    
+    const statusIsQa = card.status?.toUpperCase() === 'QA';
+    const hasQaLabel = card.labels?.some(l => {
+      if (typeof l === 'string') return l.toUpperCase() === 'QA';
+      if (l && typeof l === 'object' && 'name' in l) return (l as any).name.toUpperCase() === 'QA';
+      return false;
+    });
+
+    return statusIsQa || !!hasQaLabel;
+  }
+
+  // ==========================================
+  // MÉTODOS DO TRELLO
+  // ==========================================
   getBacklogTrelloCards(): DashboardColumnData[] {
     return this.dashboardData?.Backlog.filter(card => card.type === 'trello') || [];
   }
 
+  // ==========================================
+  // MÉTODOS DO GITHUB
+  // ==========================================
+  getBacklogGithubIssues(): DashboardColumnData[] {
+    if (!this.dashboardData) return [];
+    return this.dashboardData.Backlog.filter(card => 
+      card.type === 'github' && 
+      card.status !== 'closed' &&
+      !this.isQaIssue(card)
+    );
+  }
+
   getDoingGithubIssues(): DashboardColumnData[] {
-    // Possui dados do GitHub, state === 'open', e NÃO possui a label 'QA'.
-    return (
-      this.dashboardData?.Definition.filter(
-        (card) =>
-          card.type === 'github' &&
-          card.status === 'open' &&
-          (!card.labels || !card.labels.includes('QA'))
-      ) ||
-      this.dashboardData?.Development.filter(
-        (card) =>
-          card.type === 'github' &&
-          card.status === 'open' &&
-          (!card.labels || !card.labels.includes('QA'))
-      ) ||
-      []
+    if (!this.dashboardData) return [];
+
+    const definition = this.dashboardData.Definition?.filter(card => 
+      card.type === 'github' &&
+      card.status !== 'closed' &&
+      !this.isQaIssue(card)
+    ) || [];
+
+    const development = this.dashboardData.Development?.filter(card => 
+      card.type === 'github' &&
+      card.status !== 'closed' &&
+      !this.isQaIssue(card)
+    ) || [];
+
+    return [...definition, ...development];
+  }
+
+  getDevelopmentGithubIssues(): DashboardColumnData[] {
+    if (!this.dashboardData) return [];
+    return this.dashboardData.Development.filter(card => 
+      card.type === 'github' && 
+      card.status !== 'closed' &&
+      !this.isQaIssue(card)
     );
   }
 
   getQaGithubIssues(): DashboardColumnData[] {
-    // Possui dados do GitHub, state === 'open', e POSSUI a label 'QA'.
-    return (
-      this.dashboardData?.Definition.filter(
-        (card) => card.type === 'github' && card.status === 'open' && card.labels?.includes('QA')
-      ) ||
-      this.dashboardData?.Development.filter(
-        (card) => card.type === 'github' && card.status === 'open' && card.labels?.includes('QA')
-      ) ||
-      []
+    if (!this.dashboardData) return [];
+
+    const explicitlyInQa = this.dashboardData.QA?.filter(card => card.type === 'github') || [];
+
+    const movedToQa = [
+      ...(this.dashboardData.Backlog || []),
+      ...(this.dashboardData.Definition || []),
+      ...(this.dashboardData.Development || [])
+    ].filter(card => this.isQaIssue(card));
+
+    const allQa = [...explicitlyInQa, ...movedToQa];
+    return allQa.filter((card, index, self) => 
+      index === self.findIndex(c => c.id === card.id)
     );
   }
 
   getDoneGithubIssues(): DashboardColumnData[] {
-    // Possui dados do GitHub e state === 'closed'.
-    return (
-      this.dashboardData?.Done.filter((card) => card.type === 'github' && card.status === 'closed') ||
-      []
-    );
+    return this.dashboardData?.Done.filter(card => card.type === 'github' && card.status === 'closed') || [];
   }
 
   onTransformToIssue(cardId: string) {

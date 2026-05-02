@@ -139,7 +139,8 @@ export class GithubService {
     try {
       const activeBranches = await this.getActiveBranches();
 
-      const response = await axios.get<GithubIssue[]>(url, {
+      // Definindo a interseção para que a tipagem suporte a propriedade labels
+      const response = await axios.get<(GithubIssue & { labels: { name: string }[] })[]>(url, {
         headers: {
           Authorization: `Bearer ${this.githubToken}`,
           'Accept': 'application/vnd.github.v3+json',
@@ -148,13 +149,18 @@ export class GithubService {
 
       return response.data.map(issue => {
         const isActive = activeBranches.some(branch => branch.includes(`/${issue.number}-`));
+
+        // Verifica se existe alguma label com o nome 'QA'
+        const hasQALabel = issue.labels.some(label => label.name === 'QA');
+        const status = hasQALabel ? 'QA' : issue.state;
+
         return {
           id: String(issue.number),
           title: issue.title,
           description: issue.body || '',
           url: issue.html_url,
           type: 'github',
-          status: issue.state || undefined,
+          status: status || undefined,
           hasActiveBranch: isActive,
         };
       });
