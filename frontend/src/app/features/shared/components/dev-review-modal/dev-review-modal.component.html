@@ -32,7 +32,7 @@
   </ng-container>
 
   <!-- SUCCESS STATE -->
-  <ng-container *ngIf="!isLoading && !error && isSuccessView && createdIssueData">
+  <ng-container *ngIf="!isLoading && !error && isSuccessView && createdIssueData && reviewData">
     <div class="tw-border-b tw-border-slate-700/50 tw-px-6 tw-py-4">
       <h2 class="tw-text-xl tw-font-bold tw-text-white">✓ Issue Criada com Sucesso!</h2>
       <p class="tw-text-sm tw-text-slate-400 tw-mt-1">GitHub Issue #{{ createdIssueData.number }}</p>
@@ -48,9 +48,7 @@
       <!-- Code Block for Git Commands -->
       <div class="tw-w-full tw-bg-slate-900 tw-border tw-border-slate-600/50 tw-rounded tw-p-4">
         <p class="tw-text-xs tw-text-slate-400 tw-mb-2 tw-font-medium">Comandos Git para começar:</p>
-        <pre class="tw-text-xs tw-text-slate-300 tw-overflow-x-auto tw-whitespace-pre-wrap tw-break-words"><code>git checkout develop
-git pull origin develop
-git checkout -b feat/{{ createdIssueData.number }}-{{ slugify(createdIssueData.title) }}</code></pre>
+        <pre class="tw-text-xs tw-text-slate-300 tw-overflow-x-auto tw-whitespace-pre-wrap tw-break-words"><code>git checkout develop&#10;git pull origin develop&#10;git checkout -b feat/{{createdIssueData.number}}-{{reviewData.branchSlug}}</code></pre>
       </div>
 
       <!-- Issue Link -->
@@ -88,6 +86,16 @@ git checkout -b feat/{{ createdIssueData.number }}-{{ slugify(createdIssueData.t
           [(ngModel)]="reviewData.techTitle"
           type="text"
           class="tw-w-full tw-bg-slate-900 tw-text-white tw-border tw-border-slate-600/50 tw-rounded tw-p-2 tw-text-sm focus:tw-border-amber-500/50 focus:tw-outline-none focus:tw-ring-1 focus:tw-ring-amber-500/30">
+      </div>
+
+      <!-- Branch Slug -->
+      <div>
+        <label class="tw-block tw-text-sm tw-font-medium tw-text-slate-300 tw-mb-2">Nome da Branch (Slug em Inglês)</label>
+        <input
+          [(ngModel)]="reviewData.branchSlug"
+          type="text"
+          class="tw-w-full tw-bg-slate-900 tw-text-white tw-border tw-border-slate-600/50 tw-rounded tw-p-2 tw-text-sm focus:tw-border-amber-500/50 focus:tw-outline-none focus:tw-ring-1 focus:tw-ring-amber-500/30"
+          placeholder="ex: add-relay-button">
       </div>
 
       <!-- Tech Description -->

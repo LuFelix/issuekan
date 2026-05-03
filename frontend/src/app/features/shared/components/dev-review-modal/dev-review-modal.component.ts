@@ -8,6 +8,7 @@ import { DashboardService } from '../../../../core/services/dashboard.service';
 
 interface TechnicalRefinement {
   techTitle: string;
+  branchSlug: string;
   techDescription: string;
   tasks: string[];
 }
@@ -16,6 +17,7 @@ interface ReviewData {
   trelloCardId: string;
   title: string;
   description: string;
+  branchSlug: string;
 }
 
 @Component({
@@ -68,6 +70,7 @@ export class DevReviewModalComponent implements OnInit {
           // Copiar para dados de revisão (para permitir edição)
           this.reviewData = {
             techTitle: response.data.techTitle,
+            branchSlug: response.data.branchSlug,
             techDescription: response.data.techDescription,
             tasks: [...response.data.tasks]
           };
@@ -132,18 +135,6 @@ export class DevReviewModalComponent implements OnInit {
         console.error('❌ [DevReview] Erro ao criar Issue:', error);
       }
     });
-  }
-
-  /**
-   * Converte um texto para slug (ex: 'Novo Card' -> 'novo-card')
-   */
-  slugify(text: string): string {
-    return text
-      .toLowerCase()
-      .trim()
-      .replace(/[^\w\s-]/g, '')
-      .replace(/[\s_-]+/g, '-')
-      .replace(/^-+|-+$/g, '');
   }
 
   /**
