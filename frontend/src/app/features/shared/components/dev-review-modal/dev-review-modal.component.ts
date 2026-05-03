@@ -41,6 +41,9 @@ export class DevReviewModalComponent implements OnInit {
   error: string | null = null;
   refinement: TechnicalRefinement | null = null;
   reviewData: TechnicalRefinement | null = null;
+  isSuccessView: boolean = false;
+  createdIssueData: any = null;
+  isSubmitting: boolean = false;
 
   ngOnInit(): void {
     this.fetchTechnicalRefinement();
@@ -83,15 +86,72 @@ export class DevReviewModalComponent implements OnInit {
   }
 
   /**
-   * Aprova a especificação técnica
+   * Aprova a especificação técnica e cria a Issue no GitHub
    */
   onApproveSpecification(): void {
     if (!this.reviewData) {
       return;
     }
 
-    console.log('✅ [DevReview] Especificação aprovada:', this.reviewData);
-    this.dialogRef.close(this.reviewData);
+    this.isSubmitting = true;
+    this.error = null;
+
+    // Formatar body em Markdown no padrão ISSUEDevLang
+    const markdownBody = `**Descrição Técnica:**\n${this.reviewData.techDescription}\n\n**Tarefas:**\n${this.reviewData.tasks.map(t => '- [ ] ' + t).join('\n')}`;
+
+    console.log('📝 [DevReview] Criando Issue no GitHub com dados:', {
+      title: this.reviewData.techTitle,
+      body: markdownBody,
+      trelloCardId: this.data.trelloCardId
+    });
+
+    // Chamar serviço para criar a Issue
+    this.dashboardService.createGithubIssue(
+      this.reviewData.techTitle,
+      markdownBody,
+      this.data.trelloCardId
+    ).subscribe({
+      next: (response) => {
+        this.isSubmitting = false;
+        if (response.status === 'success') {
+          console.log('✅ [DevReview] Issue criada com sucesso:', response);
+          this.createdIssueData = {
+            number: response.issueNumber,
+            title: this.reviewData!.techTitle,
+            url: response.url
+          };
+          this.isSuccessView = true;
+        } else {
+          this.error = response.error || 'Erro ao criar Issue no GitHub';
+          console.error('❌ [DevReview] Erro na resposta:', response);
+        }
+      },
+      error: (error) => {
+        this.isSubmitting = false;
+        this.error = error?.error?.error || error?.message || 'Erro ao criar Issue no GitHub';
+        console.error('❌ [DevReview] Erro ao criar Issue:', error);
+      }
+    });
+  }
+
+  /**
+   * Converte um texto para slug (ex: 'Novo Card' -> 'novo-card')
+   */
+  slugify(text: string): string {
+    return text
+      .toLowerCase()
+      .trim()
+      .replace(/[^\w\s-]/g, '')
+      .replace(/[\s_-]+/g, '-')
+      .replace(/^-+|-+$/g, '');
+  }
+
+  /**
+   * Fecha a modal após sucesso
+   */
+  closeAndStartWork(): void {
+    console.log('✅ [DevReview] Usuário iniciando trabalho');
+    this.dialogRef.close('success');
   }
 
   /**
@@ -119,3 +179,4 @@ export class DevReviewModalComponent implements OnInit {
     }
   }
 }
+

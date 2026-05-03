@@ -164,9 +164,10 @@ export class DashboardMetricsComponent implements OnInit {
         description: cardData.description || ''
       }
     }).afterClosed().subscribe((result) => {
-      if (result) {
-        console.log('✅ Especificação Aprovada pelo Dev:', result);
-        // TODO: Integrar com próximas etapas (salvar em BD, criar issue no GitHub, etc)
+      if (result === 'success') {
+        console.log('✅ Especificação Aprovada pelo Dev - Atualizando Dashboard');
+        // Recarregar os dados do dashboard para refletir as mudanças
+        this.loadDashboardData();
       } else {
         console.log('❌ [RELAY] Modal fechada sem aprovação');
       }

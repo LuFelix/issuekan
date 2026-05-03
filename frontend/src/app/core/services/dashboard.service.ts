@@ -80,5 +80,24 @@ export class DashboardService {
       })
     );
   }
+
+  /**
+   * Cria uma Issue no GitHub a partir dos dados da especificação técnica
+   * @param title - Título da issue
+   * @param body - Corpo da issue em Markdown
+   * @param trelloCardId - ID do card no Trello para rastreabilidade
+   * @returns Observable com dados da issue criada (issueNumber, url)
+   */
+  createGithubIssue(title: string, body: string, trelloCardId: string): Observable<any> {
+    return this.http.post(`${this.relayApiUrl}/create-github-issue`, {
+      title,
+      body,
+      trelloCardId
+    }).pipe(
+      tap(response => {
+        console.log('✅ [Relay] Issue no GitHub criada:', response);
+      })
+    );
+  }
 }
 

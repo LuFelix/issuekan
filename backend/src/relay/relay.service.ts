@@ -1,6 +1,10 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { GoogleGenerativeAI } from '@google/generative-ai';
+import { ConfigService } from '@nestjs/config';
+import axios from 'axios';
 import { TrelloService } from './trello.service';
+import { PROJECT_CONTEXT } from './constants/project-context.constant';
+import { PO_LANG_SYSTEM_PROMPT, DEV_LANG_SYSTEM_PROMPT } from './constants/prompts.constant';
 
 interface RefinedStory {
   title: string;
@@ -14,14 +18,36 @@ export interface RefineStoryResponse {
   error?: string;
 }
 
+interface TechnicalRefinement {
+  techTitle: string;
+  branchSlug: string;
+  techDescription: string;
+  tasks: string[];
+}
+
+export interface GetTechnicalRefinementResponse {
+  status: string;
+  data?: TechnicalRefinement;
+  error?: string;
+}
+
 @Injectable()
 export class RelayService {
   private readonly logger = new Logger(RelayService.name);
   private genAI!: GoogleGenerativeAI;
   private model: any;
+  private githubToken: string;
+  private githubOwner = 'LuFelix';
+  private githubRepo = 'issuekan';
 
-  constructor(private trelloService: TrelloService) {
+  constructor(private trelloService: TrelloService, private configService: ConfigService) {
     this.logger.log("RelayService initialized");
+    
+    // Inicializar GitHub Token
+    this.githubToken = this.configService.get<string>('GITHUB_TOKEN') || '';
+    if (!this.githubToken) {
+      this.logger.warn('GITHUB_TOKEN not found in environment variables');
+    }
     
     // Inicializar Gemini com API Key
     const apiKey = process.env.GEMINI_API_KEY;
@@ -49,26 +75,12 @@ export class RelayService {
         };
       }
 
-      // Prompt de sistema para agir como Product Owner Sênior
-      const systemPrompt = `Você é um Product Owner Sênior com 10+ anos de experiência.
-Sua tarefa é refinar descrições de histórias de usuário em entrada natural para formato estruturado.
+      // Prompt de sistema para agir como Product Owner Sênior com contexto global
+      const systemPrompt = `[CONTEXTO GLOBAL DO PROJETO]
+${PROJECT_CONTEXT}
 
-Analise a entrada do usuário e retorne OBRIGATORIAMENTE um JSON válido com a seguinte estrutura:
-{
-  "title": "Uma descrição clara e concisa da user story (máximo 100 caracteres)",
-  "userStory": "Uma user story bem estruturada no formato: Como [ator], quero [ação], para que [benefício]",
-  "acceptanceCriteria": [
-    "Critério 1",
-    "Critério 2",
-    "Critério 3"
-  ]
-}
-
-Requisitos:
-- O JSON deve ser válido e sem aspas escapadas incorretamente
-- A user story deve seguir o padrão INVEST
-- Os critérios de aceitação devem ser testáveis e claros
-- Retorne APENAS o JSON, sem explicações adicionais`;
+[INSTRUÇÕES DA TAREFA]
+${PO_LANG_SYSTEM_PROMPT}`;
 
       const response = await this.model.generateContent({
         contents: [
@@ -182,27 +194,12 @@ Requisitos:
         };
       }
 
-      // Prompt de sistema para agir como Arquiteto de Software Sênior
-      const systemPrompt = `Você é um Arquiteto de Software Sênior com 15+ anos de experiência em arquitetura de sistemas.
+      // Prompt de sistema para agir como Arquiteto de Software Sênior com contexto global
+      const systemPrompt = `[CONTEXTO GLOBAL DO PROJETO]
+${PROJECT_CONTEXT}
 
-Sua tarefa é analisar uma história de negócio (título e descrição) e traduzir para especificações técnicas detalhadas.
-
-Analise o contexto de negócio e retorne ESTRITAMENTE um JSON válido com a seguinte estrutura:
-{
-  "techTitle": "Sugestão de título técnico que represente a implementação",
-  "techDescription": "Descrição técnica detalhada com: requisitos não funcionais, padrões de arquitetura a usar, considerações de performance, segurança, escalabilidade e confiabilidade. Seja específico e técnico.",
-  "tasks": [
-    "Tarefa técnica 1 - implementação específica",
-    "Tarefa técnica 2 - integração necessária",
-    "Tarefa técnica 3 - testes e validações"
-  ]
-}
-
-Requisitos:
-- O JSON deve ser válido e sem aspas escapadas incorretamente
-- As tasks devem ser acionáveis e técnicas
-- Considere banco de dados, cache, APIs, segurança
-- Retorne APENAS o JSON, sem explicações adicionais`;
+[INSTRUÇÕES DA TAREFA]
+${DEV_LANG_SYSTEM_PROMPT.description}`;
 
       const response = await this.model.generateContent({
         contents: [
@@ -229,14 +226,20 @@ Requisitos:
         .trim();
 
       // Parse JSON
-      const technicalRefinement = JSON.parse(cleanedResponse);
+      const technicalRefinement: TechnicalRefinement = JSON.parse(cleanedResponse);
 
       // Validar estrutura
-      if (!technicalRefinement.techTitle || !technicalRefinement.techDescription || !Array.isArray(technicalRefinement.tasks)) {
+      if (!technicalRefinement.techTitle || !technicalRefinement.branchSlug || !technicalRefinement.techDescription || !Array.isArray(technicalRefinement.tasks)) {
         return {
           status: 'error',
-          error: 'Invalid response structure from Gemini'
-        };
+          error: 'Invalid response structure from Gemini. Missing required fields: techTitle, branchSlug, techDescription, or tasks.'
+        } as GetTechnicalRefinementResponse;
+      }
+
+      // Validar se branchSlug está em inglês, minúsculas e separado por hífens
+      const branchSlugPattern = /^[a-z0-9]+(-[a-z0-9]+)*$/;
+      if (!branchSlugPattern.test(technicalRefinement.branchSlug)) {
+        this.logger.warn(`branchSlug '${technicalRefinement.branchSlug}' does not match pattern. It should be lowercase with hyphens.`);
       }
 
       this.logger.log(`Technical refinement generated: ${technicalRefinement.techTitle}`);
@@ -244,7 +247,7 @@ Requisitos:
       return {
         status: 'success',
         data: technicalRefinement
-      };
+      } as GetTechnicalRefinementResponse;
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : String(error);
       this.logger.error(`Error getting technical refinement: ${errorMessage}`, error instanceof Error ? error.stack : '');
@@ -252,6 +255,70 @@ Requisitos:
       return {
         status: 'error',
         error: `Failed to get technical refinement: ${errorMessage}`
+      } as GetTechnicalRefinementResponse;
+    }
+  }
+
+  /**
+   * Cria uma Issue no GitHub a partir dos dados da especificação técnica
+   * @param dto - DTO com trelloCardId, title e body
+   * @returns Objeto com status, issueNumber e url
+   */
+  async createGithubIssue(dto: any): Promise<any> {
+    try {
+      this.logger.log(`Creating GitHub issue: "${dto.title}"`);
+
+      if (!this.githubToken) {
+        return {
+          status: 'error',
+          error: 'GitHub token not configured. GITHUB_TOKEN is missing.'
+        };
+      }
+
+      // Adicionar rodapé de rastreabilidade
+      const bodyWithReference = `${dto.body}\n\n---\n> **Trello Reference ID:** ${dto.trelloCardId}`;
+
+      // Criar Issue no GitHub
+      const githubUrl = `https://api.github.com/repos/${this.githubOwner}/${this.githubRepo}/issues`;
+      
+      const response = await axios.post(
+        githubUrl,
+        {
+          title: dto.title,
+          body: bodyWithReference,
+          labels: ['relay', 'automated']
+        },
+        {
+          headers: {
+            'Authorization': `token ${this.githubToken}`,
+            'Accept': 'application/vnd.github.v3+json',
+            'Content-Type': 'application/json'
+          }
+        }
+      );
+
+      this.logger.log(`GitHub issue created: #${response.data.number}`);
+
+      // Obter ID da lista 'Doing' no Trello
+      const doingListId = await this.trelloService.getListIdByName('Doing');
+
+      // Mover o card do Trello para a lista 'Doing'
+      await this.trelloService.moveCard(dto.trelloCardId, doingListId);
+      this.logger.log(`Trello card ${dto.trelloCardId} moved to Doing list`);
+
+      return {
+        status: 'success',
+        issueNumber: response.data.number,
+        url: response.data.html_url,
+        message: `Issue #${response.data.number} created and card moved to Doing`
+      };
+    } catch (error: any) {
+      const errorMessage = error?.response?.data?.message || error instanceof Error ? error.message : String(error);
+      this.logger.error(`Error creating GitHub issue: ${errorMessage}`, error instanceof Error ? error.stack : '');
+
+      return {
+        status: 'error',
+        error: `Failed to create GitHub issue: ${errorMessage}`
       };
     }
   }
