@@ -67,5 +67,37 @@ export class DashboardService {
       })
     );
   }
+
+  /**
+   * Obtém refinamento técnico de um card do Trello
+   * @param technicalData - Dados do card (trelloCardId, title, description)
+   * @returns Observable com refinamento técnico (techTitle, techDescription, tasks)
+   */
+  getTechnicalRefinement(technicalData: any): Observable<any> {
+    return this.http.post(`${this.relayApiUrl}/technical-refinement`, technicalData).pipe(
+      tap(response => {
+        console.log('✅ [Relay] Refinamento técnico recebido:', response);
+      })
+    );
+  }
+
+  /**
+   * Cria uma Issue no GitHub a partir dos dados da especificação técnica
+   * @param title - Título da issue
+   * @param body - Corpo da issue em Markdown
+   * @param trelloCardId - ID do card no Trello para rastreabilidade
+   * @returns Observable com dados da issue criada (issueNumber, url)
+   */
+  createGithubIssue(title: string, body: string, trelloCardId: string): Observable<any> {
+    return this.http.post(`${this.relayApiUrl}/create-github-issue`, {
+      title,
+      body,
+      trelloCardId
+    }).pipe(
+      tap(response => {
+        console.log('✅ [Relay] Issue no GitHub criada:', response);
+      })
+    );
+  }
 }
 
