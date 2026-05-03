@@ -11,7 +11,8 @@
     <div class="tw-flex-grow tw-overflow-y-auto">
       <app-relay-card *ngFor="let card of getBacklogTrelloCards()"
         [cardData]="card"
-        (transformToIssue)="onTransformToIssue(card.id)"></app-relay-card>
+        (transformToIssue)="onTransformToIssue(card.id)"
+        (relayClick)="onRelayClick($event)"></app-relay-card>
     </div>
   </div>
 
@@ -19,7 +20,8 @@
     <h2 class="tw-text-lg tw-font-bold tw-mb-4 tw-sticky tw-top-0 tw-bg-gray-800 tw-z-10">Doing (GitHub Issue + Has Open Branch)</h2>
     <div class="tw-flex-grow tw-overflow-y-auto">
       <app-relay-card *ngFor="let card of getDevelopmentGithubIssues()"
-        [cardData]="card"></app-relay-card>
+        [cardData]="card"
+        (relayClick)="onRelayClick($event)"></app-relay-card>
     </div>
   </div>
 
@@ -27,7 +29,8 @@
     <h2 class="tw-text-lg tw-font-bold tw-mb-4 tw-sticky tw-top-0 tw-bg-gray-800 tw-z-10">QA (Has Open Branch + Issue Label QA)</h2>
     <div class="tw-flex-grow tw-overflow-y-auto">
       <app-relay-card *ngFor="let card of getQaGithubIssues()"
-        [cardData]="card"></app-relay-card>
+        [cardData]="card"
+        (relayClick)="onRelayClick($event)"></app-relay-card>
     </div>
   </div>
 
@@ -35,7 +38,8 @@
     <h2 class="tw-text-lg tw-font-bold tw-mb-4 tw-sticky tw-top-0 tw-bg-gray-800 tw-z-10">Done (No Branch - Issue Closed - Issue Label done)</h2>
     <div class="tw-flex-grow tw-overflow-y-auto">
       <app-relay-card *ngFor="let card of getDoneGithubIssues()"
-        [cardData]="card"></app-relay-card>
+        [cardData]="card"
+        (relayClick)="onRelayClick($event)"></app-relay-card>
     </div>
   </div>
 </div>

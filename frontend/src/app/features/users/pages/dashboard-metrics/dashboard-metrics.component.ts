@@ -6,11 +6,12 @@ import { HttpClientModule } from '@angular/common/http';
 import { DashboardService, DashboardData, DashboardColumnData } from '../../../../core/services/dashboard.service';
 import { RelayCardComponent } from '../../../../features/shared/components/relay-card/relay-card.component';
 import { NaturalInputModalComponent } from '../../../../features/shared/components/natural-input-modal/natural-input-modal.component';
+import { DevReviewModalComponent } from '../../../../features/shared/components/dev-review-modal/dev-review-modal.component';
 
 @Component({
   selector: 'app-dashboard-metrics',
   standalone: true,
-  imports: [CommonModule, MatCardModule, MatDialogModule, HttpClientModule, RelayCardComponent, NaturalInputModalComponent],
+  imports: [CommonModule, MatCardModule, MatDialogModule, HttpClientModule, RelayCardComponent, NaturalInputModalComponent, DevReviewModalComponent],
   templateUrl: './dashboard-metrics.component.html',
   styleUrl: './dashboard-metrics.component.scss'
 })
@@ -141,6 +142,34 @@ export class DashboardMetricsComponent implements OnInit {
         this.loadDashboardData();
       } else {
         console.log('❌ [Dashboard] Modal fechada sem enviar card');
+      }
+    });
+  }
+
+  /**
+   * Processa o clique no botão RELAY de um card
+   * @param cardData - Dados do card que foi clicado
+   */
+  onRelayClick(cardData: DashboardColumnData): void {
+    console.log('🔧 [RELAY] Iniciando refinamento técnico para:', cardData);
+
+    // Abrir modal de revisão técnica
+    this.dialog.open(DevReviewModalComponent, {
+      width: '700px',
+      panelClass: 'custom-dialog-container',
+      disableClose: true,
+      data: {
+        trelloCardId: cardData.id,
+        title: cardData.title,
+        description: cardData.description || ''
+      }
+    }).afterClosed().subscribe((result) => {
+      if (result === 'success') {
+        console.log('✅ Especificação Aprovada pelo Dev - Atualizando Dashboard');
+        // Recarregar os dados do dashboard para refletir as mudanças
+        this.loadDashboardData();
+      } else {
+        console.log('❌ [RELAY] Modal fechada sem aprovação');
       }
     });
   }

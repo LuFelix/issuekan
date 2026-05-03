@@ -112,4 +112,47 @@ export class TrelloService {
       return [];
     }
   }
+
+  /**
+   * Move um card para uma lista específica
+   * @param cardId - ID do card a ser movido
+   * @param listId - ID da lista de destino
+   * @returns Dados do card movido
+   */
+  async moveCard(cardId: string, listId: string): Promise<any> {
+    const url = `https://api.trello.com/1/cards/${cardId}`;
+    try {
+      const response = await axios.put(url, null, {
+        params: {
+          key: this.trelloApiKey,
+          token: this.trelloToken,
+          idList: listId,
+        },
+      });
+      this.logger.log(`Card ${cardId} moved to list ${listId}`);
+      return response.data;
+    } catch (error: any) {
+      this.logger.error(`Failed to move Trello card ${cardId}: ${error.message}`);
+      throw new Error(`Failed to move Trello card: ${error.message}`);
+    }
+  }
+
+  /**
+   * Obtém o ID de uma lista pelo nome
+   * @param listName - Nome da lista (ex: 'Doing', 'Backlog', 'QA', 'Done')
+   * @returns ID da lista
+   */
+  async getListIdByName(listName: string): Promise<string> {
+    try {
+      const lists = await this.getLists();
+      const list = lists.find((l: any) => l.name.toLowerCase() === listName.toLowerCase());
+      if (!list) {
+        throw new Error(`List "${listName}" not found on Trello board`);
+      }
+      return list.id;
+    } catch (error: any) {
+      this.logger.error(`Failed to get list ID for "${listName}": ${error.message}`);
+      throw new Error(`Failed to get list ID: ${error.message}`);
+    }
+  }
 }
