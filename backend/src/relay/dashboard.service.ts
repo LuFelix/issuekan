@@ -13,6 +13,7 @@ export interface DashboardColumn {
   url: string;
   status?: string;
   labels?: string[]; // Adicionado labels para o GitHub Issue
+  issueState?: string; // Estado original da issue ('open' ou 'closed')
   hasActiveBranch?: boolean;
 }
 
@@ -60,16 +61,27 @@ export class DashboardService {
       status: "", // Trello backlog cards don\'t show status UUIDs
     }));
 
-    // Populate Development with GitHub Open Issues
-    dashboardData.Development = githubOpenIssues.map(issue => ({
-      id: issue.id,
-      type: issue.type as "github", // Assumindo que o tipo é sempre \'github\'
-      title: issue.title,
-      description: issue.description,
-      url: issue.url,
-      status: issue.status,
-      hasActiveBranch: issue.hasActiveBranch,
-    }));
+    // Populate Development with GitHub Open Issues and Done with Closed Issues
+    for (const issue of githubOpenIssues) {
+      const columnData = {
+        id: issue.id,
+        type: issue.type as "github",
+        title: issue.title,
+        description: issue.description,
+        url: issue.url,
+        status: issue.status,
+        issueState: issue.issueState,
+        hasActiveBranch: issue.hasActiveBranch,
+      };
+
+      // REGRA CRÍTICA: Se a issue está fechada, vai EXCLUSIVAMENTE para Done
+      if (issue.issueState === 'closed') {
+        dashboardData.Done.push(columnData);
+      } else if (issue.issueState === 'open') {
+        // Issues abertas vão para Development
+        dashboardData.Development.push(columnData);
+      }
+    }
 
     // Process existing RelayLinks (GitHub Issues and Trello Cards linked to issues)
     for (const link of relayLinks) {
@@ -83,18 +95,20 @@ export class DashboardService {
           description: githubIssue.body,
           url: githubIssue.html_url,
           status: githubIssue.state,
+          issueState: githubIssue.state,
           labels: githubIssue.labels?.map((label: { name: string }) => label.name) || [],
           hasActiveBranch: githubIssue.hasActiveBranch,
         };
 
         // Distribute based on the new logic
-        if (cardData.status === "open" && !cardData.labels?.includes("QA")) {
-          // Já populado com githubOpenIssues, ajustar lógica se necessário
-        } else if (cardData.status === "open" && cardData.labels?.includes("QA")) {
-          dashboardData.QA.push(cardData);
-        } else if (cardData.status === "closed") {
+        // REGRA CRÍTICA: Se está fechada, vai EXCLUSIVAMENTE para Done
+        if (cardData.issueState === "closed") {
           dashboardData.Done.push(cardData);
+        } else if (cardData.issueState === "open" && cardData.labels?.includes("QA")) {
+          // Issues abertas com label QA vão para QA
+          dashboardData.QA.push(cardData);
         }
+        // Issues abertas sem QA não vão para nenhuma coluna específica aqui (já foram processadas acima)
       } else {
         // Handle cases where GitHub issue might have been deleted but RelayLink exists
         this.logger.warn(`GitHub Issue ${link.githubIssueId} linked to Trello Card ${link.trelloCardId} not found.`);
