@@ -45,6 +45,16 @@ export class RelayCardComponent {
     return this.cardData.type === 'trello';
   }
 
+  /**
+   * Verifica se o card é de QA aguardando (label/status QA e sem branch ativa)
+   */
+  get isQaAwaiting(): boolean {
+    const isQa = (this.cardData.status === 'QA') || 
+                 (this.cardData.labels?.includes('QA') ?? false);
+    const hasNoBranch = !(this.cardData?.hasActiveBranch ?? false);
+    return isQa && hasNoBranch;
+  }
+
   emitTransformToIssue(): void {
     this.transformToIssue.emit(this.cardData.id);
   }

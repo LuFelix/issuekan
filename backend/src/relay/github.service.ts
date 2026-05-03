@@ -18,6 +18,7 @@ interface DashboardColumnData {
   url: string;
   type: string;
   status?: string;
+  issueState?: string; // Novo campo para armazenar o estado original ('open' ou 'closed')
   hasActiveBranch?: boolean;
 }
 
@@ -134,7 +135,7 @@ export class GithubService {
   async getAllOpenIssuesForDashboard(): Promise<DashboardColumnData[]> {
     const repoOwner = 'LuFelix';
     const repoName = 'issuekan';
-    const url = `https://api.github.com/repos/${repoOwner}/${repoName}/issues?state=open`;
+    const url = `https://api.github.com/repos/${repoOwner}/${repoName}/issues?state=all`;
 
     try {
       const activeBranches = await this.getActiveBranches();
@@ -161,6 +162,7 @@ export class GithubService {
           url: issue.html_url,
           type: 'github',
           status: status || undefined,
+          issueState: issue.state, // Armazenar estado original ('open' ou 'closed')
           hasActiveBranch: isActive,
         };
       });
