@@ -10,6 +10,7 @@ import { UsersModule } from './users/users.module';
 import { GlobalJwtModule } from './shared/global-jwt.module';
 import { SeedModule } from './seeds/seed.module';
 import { RelayModule } from './relay/relay.module';
+import { ProjectConfigurationModule } from './project-configuration/project-configuration.module';
 import { MailerModule } from '@nestjs-modules/mailer';
 
 @Module({
@@ -53,6 +54,7 @@ import { MailerModule } from '@nestjs-modules/mailer';
     GlobalJwtModule,
     SeedModule,
     RelayModule,
+    ProjectConfigurationModule,
   ],
   controllers: [AppController],
   providers: [AppService],
